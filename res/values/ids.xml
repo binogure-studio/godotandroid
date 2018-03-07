@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
+	<string name="facebook_app_id">[YOUR FACEBOOK APP ID HERE]</string>
+	<string name="google_play_app_id">[YOUR GOOGLE PLAY GAME APP ID HERE]</string>
 </resources>
