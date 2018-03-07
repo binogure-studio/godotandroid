@@ -122,7 +122,7 @@ public class GoogleLeaderboard {
 				public void onSuccess (Intent intent) {
 					activity.startActivityForResult(intent, REQUEST_LEADERBOARD);
 
-					GodotLib.calldeferred(instance_id, "google_leaderboard_showd", new Object[] { });
+					GodotLib.calldeferred(instance_id, "google_leaderboard_showd", new Object[] { l_id });
 				}
 			})
 			.addOnFailureListener(new OnFailureListener() {

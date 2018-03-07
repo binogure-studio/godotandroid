@@ -199,7 +199,7 @@ public class GoogleSnapshot {
 
 	public void snapshot_save(final String snapshotName, final String data, final String description, final boolean flag_force) {
 		if (is_connected()) {
-			Log.i(TAG, "PlayGameServices: snapshot_save");
+			Log.i(TAG, "Saving " + snapshotName);
 
 			AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
 				@Override
@@ -214,7 +214,7 @@ public class GoogleSnapshot {
 
 								Log.e(TAG, "Error while opening Snapshot: " + message);
 
-								GodotLib.calldeferred(instance_id, "snapshot_save_failed", new Object[] { message });
+								GodotLib.calldeferred(instance_id, "google_snapshot_save_failed", new Object[] { message });
 							}
 						})
 						.continueWith(new Continuation<SnapshotsClient.DataOrConflict<Snapshot>, Void>() {
@@ -230,7 +230,7 @@ public class GoogleSnapshot {
 										String message = "Cannot save snapshot " + snapshotName + " (set the force flag to force a conflict resolution)";
 										Log.w(TAG, message);
 					
-										GodotLib.calldeferred(instance_id, "snapshot_save_failed", new Object[] { message });
+										GodotLib.calldeferred(instance_id, "google_snapshot_save_failed", new Object[] { message });
 					
 										return null;
 									}
@@ -243,7 +243,7 @@ public class GoogleSnapshot {
 
 									Log.w(TAG, message);
 					
-									GodotLib.calldeferred(instance_id, "snapshot_save_failed", new Object[] { message });
+									GodotLib.calldeferred(instance_id, "google_snapshot_save_failed", new Object[] { message });
 
 									return null;
 								}
@@ -254,17 +254,20 @@ public class GoogleSnapshot {
 								SnapshotMetadataChange metadataChange = new SnapshotMetadataChange.Builder().setDescription(description).build();
 					
 								// Handle success and failure for the commit and close.
-								try {
-									Tasks.await(snapshotsClient.commitAndClose(snapshot, metadataChange));
+								snapshotsClient.commitAndClose(snapshot, metadataChange).addOnCompleteListener(new OnCompleteListener<SnapshotMetadata>() {
+                  @Override
+                  public void onComplete(@NonNull Task<SnapshotMetadata> task) {
+                    if (task.isSuccessful()) {
+                      GodotLib.calldeferred(instance_id, "google_snapshot_saved", new Object[] { });
+                    } else {
+											String message = "Cannot save snapshot: " + task.getException();
 
-									GodotLib.calldeferred(instance_id, "snapshot_saved", new Object[] { });
-								} catch (Exception e) {
-									String message = "Cannot save snapshot: " + e.getMessage();
-
-									Log.w(TAG, message);
-					
-									GodotLib.calldeferred(instance_id, "snapshot_save_failed", new Object[] { message });
-								}
+											Log.w(TAG, task.getException());
+							
+											GodotLib.calldeferred(instance_id, "google_snapshot_save_failed", new Object[] { message });
+                    }
+                  }
+								});
 
 								return null;
 							}
@@ -278,7 +281,7 @@ public class GoogleSnapshot {
 		} else {
 			String message = "PlayGameServices: Google not connected";
 
-			GodotLib.calldeferred(instance_id, "snapshot_save_failed", new Object[] { message });
+			GodotLib.calldeferred(instance_id, "google_snapshot_save_failed", new Object[] { message });
     }
 	}
 }

@@ -35,6 +35,11 @@ public class GodotAndroid extends Godot.SingletonBase {
 	private static Context context;
 	private static Activity activity;
 
+	private GoogleAchievements googleAchievements;
+	private GoogleAuthentication googleAuthentication;
+	private GoogleLeaderboard googleLeaderboard;
+	private GoogleSnapshot googleSnapshot;
+
 	static {
 		GOOGLE_SNAPSHOT_RESOLUTION_POLICIES = new HashMap<String, Integer>();
 
@@ -74,10 +79,17 @@ public class GodotAndroid extends Godot.SingletonBase {
 	public void google_initialize(final int instance_id) {
 		activity.runOnUiThread(new Runnable() {
 			public void run() {
-				GoogleAchievements.getInstance(activity).init(instance_id);
-				GoogleAuthentication.getInstance(activity).init(instance_id);
-				GoogleLeaderboard.getInstance(activity).init(instance_id);
-				GoogleSnapshot.getInstance(activity).init(instance_id);
+				googleAchievements = GoogleAchievements.getInstance(activity);
+				googleAchievements.init(instance_id);
+
+				googleAuthentication = GoogleAuthentication.getInstance(activity);
+				googleAuthentication.init(instance_id);
+
+				googleLeaderboard = GoogleLeaderboard.getInstance(activity);
+				googleLeaderboard.init(instance_id);
+
+				googleSnapshot = GoogleSnapshot.getInstance(activity);
+				googleSnapshot.init(instance_id);
 			}
 		});
 	}
@@ -85,7 +97,7 @@ public class GodotAndroid extends Godot.SingletonBase {
 	public void google_connect() {
 		activity.runOnUiThread(new Runnable() {
 			public void run() {
-				GoogleAuthentication.getInstance(activity).connect();
+				googleAuthentication.connect();
 			}
 		});
 	}
@@ -93,20 +105,20 @@ public class GodotAndroid extends Godot.SingletonBase {
 	public void google_disconnect() {
 		activity.runOnUiThread(new Runnable() {
 			public void run() {
-				GoogleAuthentication.getInstance(activity).disconnect();
+				googleAuthentication.disconnect();
 			}
 		});
 	}
 
 	public boolean google_is_connected() {
-		return GoogleAuthentication.getInstance(activity).isConnected();
+		return googleAuthentication.isConnected();
 	}
 
 	// Google Leaderboards
 	public void google_leaderboard_submit(final String id, final int score) {
 		activity.runOnUiThread(new Runnable() {
 			public void run() {
-				GoogleLeaderboard.getInstance(activity).leaderboard_submit(id, score);
+				googleLeaderboard.leaderboard_submit(id, score);
 			}
 		});
 	}
@@ -114,7 +126,7 @@ public class GodotAndroid extends Godot.SingletonBase {
 	public void google_leaderboard_show(final String id) {
 		activity.runOnUiThread(new Runnable() {
 			public void run() {
-				GoogleLeaderboard.getInstance(activity).leaderboard_show(id);
+				googleLeaderboard.leaderboard_show(id);
 			}
 		});
 	}
@@ -122,41 +134,33 @@ public class GodotAndroid extends Godot.SingletonBase {
 	public void google_leaderboard_showlist() {
 		activity.runOnUiThread(new Runnable() {
 			public void run() {
-				GoogleLeaderboard.getInstance(activity).leaderboard_showlist();
+				googleLeaderboard.leaderboard_showlist();
 			}
 		});
 	}
 
 	// Google snapshots
 	public void google_snapshot_load(final String snapshotName, final int conflictResolutionPolicy) {
-		activity.runOnUiThread(new Runnable() {
-			public void run() {
-				GoogleSnapshot.getInstance(activity).snapshot_load(snapshotName, conflictResolutionPolicy);
-			}
-		});
+		googleSnapshot.snapshot_load(snapshotName, conflictResolutionPolicy);
 	}
 
 	public void google_snapshot_save(final String snapshotName, final String data, final String description, final boolean flag_force) {
-		activity.runOnUiThread(new Runnable() {
-			public void run() {
-				GoogleSnapshot.getInstance(activity).snapshot_save(snapshotName, data, description, flag_force);
-			}
-		});
+		googleSnapshot.snapshot_save(snapshotName, data, description, flag_force);
 	}
 
 	// Google achievements
 	public void google_achievement_unlock(final String id) {
 		activity.runOnUiThread(new Runnable() {
 			public void run() {
-				GoogleAchievements.getInstance(activity).achievement_unlock(id);
+				googleAchievements.achievement_unlock(id);
 			}
 		});
 	}
 
-	public void google_google_achievement_increment(final String id, final int amount) {
+	public void google_achievement_increment(final String id, final int amount) {
 		activity.runOnUiThread(new Runnable() {
 			public void run() {
-				GoogleAchievements.getInstance(activity).achievement_increment(id, amount);
+				googleAchievements.achievement_increment(id, amount);
 			}
 		});
 	}
@@ -164,40 +168,40 @@ public class GodotAndroid extends Godot.SingletonBase {
 	public void google_achievement_show_list() {
 		activity.runOnUiThread(new Runnable() {
 			public void run() {
-				GoogleAchievements.getInstance(activity).achievement_show_list();
+				googleAchievements.achievement_show_list();
 			}
 		});
 	}
 
 	protected void onMainActivityResult (int requestCode, int resultCode, Intent data) {
 		// Trigger google's services
-		GoogleAchievements.getInstance(activity).onActivityResult(requestCode, resultCode, data);
-		GoogleAuthentication.getInstance(activity).onActivityResult(requestCode, resultCode, data);
-		GoogleLeaderboard.getInstance(activity).onActivityResult(requestCode, resultCode, data);
-		GoogleSnapshot.getInstance(activity).onActivityResult(requestCode, resultCode, data);
+		googleAchievements.onActivityResult(requestCode, resultCode, data);
+		googleAuthentication.onActivityResult(requestCode, resultCode, data);
+		googleLeaderboard.onActivityResult(requestCode, resultCode, data);
+		googleSnapshot.onActivityResult(requestCode, resultCode, data);
 	}
 
 	protected void onMainPause () {
 		// Trigger google's services
-		GoogleAchievements.getInstance(activity).onPause();
-		GoogleAuthentication.getInstance(activity).onPause();
-		GoogleLeaderboard.getInstance(activity).onPause();
-		GoogleSnapshot.getInstance(activity).onPause();
+		googleAchievements.onPause();
+		googleAuthentication.onPause();
+		googleLeaderboard.onPause();
+		googleSnapshot.onPause();
 	}
 
 	protected void onMainResume () {
 		// Trigger google's services
-		GoogleAchievements.getInstance(activity).onResume();
-		GoogleAuthentication.getInstance(activity).onResume();
-		GoogleLeaderboard.getInstance(activity).onResume();
-		GoogleSnapshot.getInstance(activity).onResume();
+		googleAchievements.onResume();
+		googleAuthentication.onResume();
+		googleLeaderboard.onResume();
+		googleSnapshot.onResume();
 	}
 
 	protected void onMainDestroy () {
 		// Trigger google's services
-		GoogleAchievements.getInstance(activity).onStop();
-		GoogleAuthentication.getInstance(activity).onStop();
-		GoogleLeaderboard.getInstance(activity).onStop();
-		GoogleSnapshot.getInstance(activity).onStop();
+		googleAchievements.onStop();
+		googleAuthentication.onStop();
+		googleLeaderboard.onStop();
+		googleSnapshot.onStop();
 	}
 }

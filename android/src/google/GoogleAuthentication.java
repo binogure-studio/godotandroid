@@ -265,24 +265,7 @@ public class GoogleAuthentication {
 	}
 
 	private void silentConnectHandler(GoogleSignInResult googleSignInResult) {
-		// We have to disconnect from here, in order to be able to connect with firebase
-		mGoogleApiClient.disconnect();
-
-		if (googleSignInResult != null) {
-			GoogleSignInAccount account = googleSignInResult.getSignInAccount();
-
-			if (account != null) {
-				firebaseAuthWithGoogle(account);
-			} else if (updateConnectionStatus(GodotConnectStatus.DISCONNECTED)) {
-				Log.d(TAG, "Silent connection failed, need an explicit connection");
-
-				// Need a fresh new authentication
-				connect();
-			}
-		} else if (updateConnectionStatus(GodotConnectStatus.DISCONNECTED)) {
-			Log.d(TAG, "Silent connection failed, need an explicit connection");
-
-			// Need a fresh new authentication
+		if (updateConnectionStatus(GodotConnectStatus.DISCONNECTED)) {
 			connect();
 		}
 	}
@@ -297,7 +280,7 @@ public class GoogleAuthentication {
 
 					// Tries to connect in an async way only if the user is not already connected
 					mGoogleApiClient.connect(GoogleApiClient.SIGN_IN_MODE_OPTIONAL);
-
+				
 					// If the user's cached credentials are valid, the OptionalPendingResult will be "done"
 					// and the GoogleSignInResult will be available instantly.
 					OptionalPendingResult<GoogleSignInResult> pendingResult = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
