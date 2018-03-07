@@ -34,11 +34,11 @@ Copy `google-services.json` file into `godot/platform/android/java/`.
 
 #### Note:
 
-I strongly suggest you to have a `google-services.java` for debug purpose and another one for your release. (respectivly `godot/platform/android/java/src/debug` and `godot/platform/android/java/src/release`, create the directories if needed).
+I strongly recommand you to have a `google-services.java` for debug purpose and another one for your release. (put them respectivly in `godot/platform/android/java/src/debug` and `godot/platform/android/java/src/release`, create the directories if needed).
 
-### Compiling android's templates
+### Compiling android's templates (Linux)
 
-You only need to compile export templates
+[Prerequisites documentation](http://docs.godotengine.org/en/2.1/development/compiling/compiling_for_android.html)
 
 ```sh
 export CXX=g++
@@ -47,7 +47,7 @@ export CC=gcc
 # This one is optional
 export SCRIPT_AES256_ENCRYPTION_KEY=YOUR_ENCRYPTION_KEY
 
-
+# Place where the NDK/SDK are
 export ANDROID_HOME=/usr/lib/android-sdk
 export ANDROID_NDK_ROOT=/usr/lib/android-sdk/ndk-bundle
 
@@ -107,16 +107,21 @@ func google_connect():
 ```
 
 # API (WIP)
-```python
 
-# Google play Snapshots
-# conflict_resolution values
-# RESOLUTION_POLICY_HIGHEST_PROGRESS = 4
-# RESOLUTION_POLICY_LAST_KNOWN_GOOD = 2
-# RESOLUTION_POLICY_LONGEST_PLAYTIME = 1
-# RESOLUTION_POLICY_MANUAL = -1
-# RESOLUTION_POLICY_MOST_RECENTLY_MODIFIED = 3
-```
+|name|type|parameters|return|description|
+|---|---|---|---|---|
+|google_initialize|function|int instance_id|void|Initialize and connect to google play game service automatically. Google callbacks will be done using the instance_id. |
+|google_connect|function||void|Connect to google play game service|
+|google_disconnect|function||void|Disconnect from google play game service|
+|google_is_connected|function||boolean|Return `true` if connected, `false` otherwise|
+|google_leaderboard_submit|function|String id, int score|void|Submit a score to the given leaderboard|
+|google_leaderboard_show|function|String id|void|Show the given leaderboard|
+|google_leaderboard_showlist|function||void|Show the leaderboards' list|
+|google_snapshot_load|function|String name, int conflictResolutionPolicy|void|Load the given snapshot. `godot_android` exposes the following values for the resolution policy `RESOLUTION_POLICY_HIGHEST_PROGRESS`, `RESOLUTION_POLICY_LAST_KNOWN_GOOD`, `RESOLUTION_POLICY_LONGEST_PLAYTIME`, `RESOLUTION_POLICY_MANUAL`, `RESOLUTION_POLICY_MOST_RECENTLY_MODIFIED`|
+|google_snapshot_save|function|String name, String data, String description, boolean force|void|Save a given snapshot. Use the `force` to overwrite a conflicting savegame|
+|google_achievement_unlock|function|String id|void|Unlock the given achievement|
+|google_achievement_increment|function|String id, int amount|void|Increment by `amount` the given achievement|
+|google_achievement_show_list|function||void|Show the achievement list|
 
 # Log
 
