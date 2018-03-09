@@ -43,12 +43,7 @@ public class GoogleSnapshot {
 	private static Activity activity = null;
 	private static Context context = null;
 	private static GoogleSnapshot mInstance = null;
-
 	private static int script_id;
-
-	private static final int REQUEST_SNAPSHOT = 9009;
-  private static final int RC_SAVE_SNAPSHOT = 9004;
-	private static final int RC_LOAD_SNAPSHOT = 9005;
 
 	private static final int MAX_SNAPSHOT_RESOLVE_RETRIES = 10;
 	private static final String TAG = "GoogleSnapshot";

@@ -12,16 +12,12 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.EnumMap;
-import java.io.IOException;
-
 import org.json.JSONObject;
 import org.json.JSONException;
 
 import org.godotengine.godot.GodotLib;
+import org.godotengine.godot.GodotAndroidCommon;
+import org.godotengine.godot.GodotAndroidRequest;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -57,33 +53,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
-public class GoogleAuthentication {
+public class GoogleAuthentication extends GodotAndroidCommon {
 	private static int instance_id;
 	private static Activity activity = null;
 	private static Context context = null;
 	private static GoogleAuthentication mInstance = null;
-	private static final int GOOGLE_SIGN_IN_REQUEST	= 9001;
-
-	private enum GodotConnectStatus {
-		INITIALIZED,
-		DISCONNECTED,
-		DISCONNECTING,
-		CONNECTING,
-		CONNECTED
-	}
-
-	private static final Map<GodotConnectStatus, GodotConnectStatus[]> GODOT_CONNECTION_TRANSITIONS;
-	private static GodotConnectStatus godotConnectionStatus = GodotConnectStatus.INITIALIZED;
-
-	static {
-		GODOT_CONNECTION_TRANSITIONS = new EnumMap<GodotConnectStatus, GodotConnectStatus[]>(GodotConnectStatus.class);
-
-		GODOT_CONNECTION_TRANSITIONS.put(GodotConnectStatus.INITIALIZED, new GodotConnectStatus[] {GodotConnectStatus.DISCONNECTED, GodotConnectStatus.CONNECTING});
-		GODOT_CONNECTION_TRANSITIONS.put(GodotConnectStatus.DISCONNECTED, new GodotConnectStatus[] {GodotConnectStatus.CONNECTING});
-		GODOT_CONNECTION_TRANSITIONS.put(GodotConnectStatus.DISCONNECTING, new GodotConnectStatus[] {GodotConnectStatus.DISCONNECTED, GodotConnectStatus.CONNECTED});
-		GODOT_CONNECTION_TRANSITIONS.put(GodotConnectStatus.CONNECTING, new GodotConnectStatus[] {GodotConnectStatus.DISCONNECTED, GodotConnectStatus.CONNECTED});
-		GODOT_CONNECTION_TRANSITIONS.put(GodotConnectStatus.CONNECTED, new GodotConnectStatus[] {GodotConnectStatus.DISCONNECTING});
-	};
 
 	private FirebaseAuth mAuth;
 	private GoogleApiClient mGoogleApiClient;
@@ -98,30 +72,6 @@ public class GoogleAuthentication {
 		}
 
 		return mInstance;
-	}
-
-	private boolean updateConnectionStatus(GodotConnectStatus nextConnectionStatus) {
-		return updateConnectionStatus(nextConnectionStatus, false);
-	}
-
-	private synchronized boolean updateConnectionStatus(GodotConnectStatus nextConnectionStatus, boolean flagForce) {
-		boolean connectionStatusUpdated = flagForce;
-		GodotConnectStatus[] validTransitions = GODOT_CONNECTION_TRANSITIONS.get(godotConnectionStatus);
-
-		if (!connectionStatusUpdated) {
-			for (GodotConnectStatus validTransition : validTransitions) {
-				if (validTransition == nextConnectionStatus) {
-					connectionStatusUpdated = true;
-					godotConnectionStatus = nextConnectionStatus;
-
-					break;
-				}
-			}
-		} else {
-			godotConnectionStatus = nextConnectionStatus;
-		}
-
-		return connectionStatusUpdated;
 	}
 
 	public GoogleAuthentication(Activity p_activity) {
@@ -142,14 +92,6 @@ public class GoogleAuthentication {
 
 		mAuth = FirebaseAuth.getInstance();
   }
-
-	public boolean isConnected() {
-		return godotConnectionStatus == GodotConnectStatus.CONNECTED;
-	}
-
-	public boolean isConnecting() {
-		return godotConnectionStatus == GodotConnectStatus.CONNECTING;
-	}
 
 	public void onConnected() {
 		if (updateConnectionStatus(GodotConnectStatus.CONNECTED)) {
@@ -183,7 +125,7 @@ public class GoogleAuthentication {
 		if (updateConnectionStatus(GodotConnectStatus.CONNECTING)) {
 			Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
 
-			activity.startActivityForResult(signInIntent, GOOGLE_SIGN_IN_REQUEST);
+			activity.startActivityForResult(signInIntent, GodotAndroidRequest.GOOGLE_AUTHENTICATION_REQUEST);
 		}
 	}
 
@@ -248,7 +190,7 @@ public class GoogleAuthentication {
 	}
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == GOOGLE_SIGN_IN_REQUEST) {
+		if (requestCode == GodotAndroidRequest.GOOGLE_AUTHENTICATION_REQUEST) {
 			GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
 
 			if (result.isSuccess()) {
@@ -266,6 +208,8 @@ public class GoogleAuthentication {
 
 	private void silentConnectHandler(GoogleSignInResult googleSignInResult) {
 		if (updateConnectionStatus(GodotConnectStatus.DISCONNECTED)) {
+			mGoogleApiClient.disconnect();
+
 			connect();
 		}
 	}

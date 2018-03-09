@@ -20,6 +20,7 @@ import org.json.JSONObject;
 import org.json.JSONException;
 
 import org.godotengine.godot.GodotLib;
+import org.godotengine.godot.GodotAndroidRequest;
 
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.ApiException;
@@ -40,10 +41,8 @@ public class GoogleAchievements {
 	private static Activity activity = null;
 	private static Context context = null;
 	private static GoogleAchievements mInstance = null;
-
 	private static int script_id;
 
-	private static final int REQUEST_ACHIEVEMENTS = 9002;
 	private static final String TAG = "GoogleAchievements";
 
 	public static GoogleAchievements getInstance(Activity p_activity) {
@@ -134,7 +133,7 @@ public class GoogleAchievements {
 			.addOnSuccessListener(new OnSuccessListener<Intent>() {
 				@Override
 				public void onSuccess(Intent intent) {
-					activity.startActivityForResult(intent, REQUEST_ACHIEVEMENTS);
+					activity.startActivityForResult(intent, GodotAndroidRequest.GOOGLE_ACHIEVEMENT_REQUEST);
 				}
 			})
 			.addOnFailureListener(new OnFailureListener() {

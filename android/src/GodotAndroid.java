@@ -15,6 +15,8 @@ import android.os.Bundle;
 
 import com.google.android.gms.games.SnapshotsClient;
 
+import org.godotengine.godot.GodotAndroidRequest;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.HashMap;
@@ -28,6 +30,10 @@ import org.godotengine.godot.google.GoogleAuthentication;
 import org.godotengine.godot.google.GoogleLeaderboard;
 import org.godotengine.godot.google.GoogleSnapshot;
 
+// Import facebook
+import org.godotengine.godot.facebook.FacebookAuthentication;
+import org.godotengine.godot.facebook.FacebookShare;
+
 public class GodotAndroid extends Godot.SingletonBase {
 
 	public static final HashMap<String, Integer> GOOGLE_SNAPSHOT_RESOLUTION_POLICIES;
@@ -39,6 +45,9 @@ public class GodotAndroid extends Godot.SingletonBase {
 	private GoogleAuthentication googleAuthentication;
 	private GoogleLeaderboard googleLeaderboard;
 	private GoogleSnapshot googleSnapshot;
+
+	private FacebookAuthentication facebookAuthentication;
+	private FacebookShare facebookShare;
 
 	static {
 		GOOGLE_SNAPSHOT_RESOLUTION_POLICIES = new HashMap<String, Integer>();
@@ -69,13 +78,21 @@ public class GodotAndroid extends Godot.SingletonBase {
 			"google_snapshot_load", "google_snapshot_save",
 
 			// GoogleAchievements
-			"google_achievement_unlock", "google_achievement_increment", "google_achievement_show_list"
+			"google_achievement_unlock", "google_achievement_increment", "google_achievement_show_list",
+
+			// Facebook
+			"facebook_initialize",
+
+			// FacebookAuthentication
+			"facebook_connect", "facebook_disconnect", "facebook_is_connected",
+
+			// FacebookShare
+			"facebook_share_link", "facebook_share_link_with_quote", "facebook_share_link_with_quote_and_hashtag"
 		});
 
 		activity = p_activity;
 	}
 
-	// Google GoogleAuthentication
 	public void google_initialize(final int instance_id) {
 		activity.runOnUiThread(new Runnable() {
 			public void run() {
@@ -90,6 +107,62 @@ public class GodotAndroid extends Godot.SingletonBase {
 
 				googleSnapshot = GoogleSnapshot.getInstance(activity);
 				googleSnapshot.init(instance_id);
+			}
+		});
+	}
+
+	public void facebook_initialize(final int instance_id) {
+		activity.runOnUiThread(new Runnable() {
+			public void run() {
+					facebookAuthentication = FacebookAuthentication.getInstance(activity);
+					facebookAuthentication.init(instance_id);
+
+					facebookShare = FacebookShare.getInstance(activity);
+					facebookShare.init(instance_id);
+			}
+		});
+	}
+
+	public void facebook_connect() {
+		activity.runOnUiThread(new Runnable() {
+			public void run() {
+				facebookAuthentication.connect();
+			}
+		});
+	}
+
+	public void facebook_disconnect() {
+		activity.runOnUiThread(new Runnable() {
+			public void run() {
+				facebookAuthentication.disconnect();
+			}
+		});
+	}
+
+	public boolean facebook_is_connected() {
+		return facebookAuthentication.isConnected();
+	}
+
+	public void facebook_share_link(final String link) {
+		activity.runOnUiThread(new Runnable() {
+			public void run() {
+				facebookShare.share_link(link);
+			}
+		});
+	}
+
+	public void facebook_share_link_with_quote(final String link, final String quote) {
+		activity.runOnUiThread(new Runnable() {
+			public void run() {
+				facebookShare.share_link(link, quote);
+			}
+		});
+	}
+
+	public void facebook_share_link_with_quote_and_hashtag(final String link, final String quote, final String hashtag) {
+		activity.runOnUiThread(new Runnable() {
+			public void run() {
+				facebookShare.share_link(link, quote, hashtag);
 			}
 		});
 	}
@@ -179,6 +252,10 @@ public class GodotAndroid extends Godot.SingletonBase {
 		googleAuthentication.onActivityResult(requestCode, resultCode, data);
 		googleLeaderboard.onActivityResult(requestCode, resultCode, data);
 		googleSnapshot.onActivityResult(requestCode, resultCode, data);
+
+		// Trigger Facebook
+		facebookAuthentication.onActivityResult(requestCode, resultCode, data);
+		facebookShare.onActivityResult(requestCode, resultCode, data);
 	}
 
 	protected void onMainPause () {
@@ -187,6 +264,10 @@ public class GodotAndroid extends Godot.SingletonBase {
 		googleAuthentication.onPause();
 		googleLeaderboard.onPause();
 		googleSnapshot.onPause();
+
+		// Trigger Facebook
+		facebookAuthentication.onPause();
+		facebookShare.onPause();
 	}
 
 	protected void onMainResume () {
@@ -195,6 +276,10 @@ public class GodotAndroid extends Godot.SingletonBase {
 		googleAuthentication.onResume();
 		googleLeaderboard.onResume();
 		googleSnapshot.onResume();
+
+		// Trigger Facebook
+		facebookAuthentication.onResume();
+		facebookShare.onResume();
 	}
 
 	protected void onMainDestroy () {
@@ -203,5 +288,9 @@ public class GodotAndroid extends Godot.SingletonBase {
 		googleAuthentication.onStop();
 		googleLeaderboard.onStop();
 		googleSnapshot.onStop();
+
+		// Trigger Facebook
+		facebookAuthentication.onStop();
+		facebookShare.onStop();
 	}
 }

@@ -20,6 +20,7 @@ import org.json.JSONObject;
 import org.json.JSONException;
 
 import org.godotengine.godot.GodotLib;
+import org.godotengine.godot.GodotAndroidRequest;
 
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.ApiException;
@@ -43,9 +44,6 @@ public class GoogleLeaderboard {
 	private static GoogleLeaderboard mInstance = null;
 
 	private static int script_id;
-
-	private static final int REQUEST_LEADERBOARD = 9003;
-	
 	private static final String TAG = "GoogleLeaderboard";
 
 	public static GoogleLeaderboard getInstance(Activity p_activity) {
@@ -120,7 +118,7 @@ public class GoogleLeaderboard {
       .addOnSuccessListener(new OnSuccessListener<Intent>() {
 				@Override
 				public void onSuccess (Intent intent) {
-					activity.startActivityForResult(intent, REQUEST_LEADERBOARD);
+					activity.startActivityForResult(intent, GodotAndroidRequest.GOOGLE_LEADERBOARD_REQUEST);
 
 					GodotLib.calldeferred(instance_id, "google_leaderboard_showd", new Object[] { l_id });
 				}
@@ -152,7 +150,7 @@ public class GoogleLeaderboard {
 				@Override
 				public void onSuccess (Intent intent) {
 					Log.d(TAG, "Showing leaderboards");
-					activity.startActivityForResult(intent, REQUEST_LEADERBOARD);
+					activity.startActivityForResult(intent, GodotAndroidRequest.GOOGLE_LEADERBOARD_REQUEST);
 
 					GodotLib.calldeferred(instance_id, "google_leaderboard_showlisted", new Object[] { });
 				}

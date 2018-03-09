@@ -7,8 +7,10 @@ Android services for Godot Engine 2.1, including:
    * Leaderboards
    * Achievements
    * Snapshots
+* Facebook
+   * Authentication
+   * Share
 * Firebase **WIP**
-* Facebook **WIP**
 
 
 # Usage
@@ -80,7 +82,7 @@ Edit `engine.cfg` and add an `android` part as following:
 modules="org/godotengine/godot/GodotAndroid"
 ```
 
-## Initliazing the module using GDScript
+## Initializing the module using GDScript
 
 Here is an example
 
@@ -127,6 +129,12 @@ func google_connect():
 |google_achievement_increment|String id, int amount|void|Increment by `amount` the given achievement|
 |google_achievement_show_list||void|Show the achievement list|
 
+### Facebook
+
+|name|parameters|return|description|
+|---|---|---|---|
+|||||
+
 ## Callbacks
 
 ### Google
@@ -151,6 +159,11 @@ func google_connect():
 |google_snapshot_saved||Called once the snapshot has been saved|
 |google_snapshot_save_failed|String message|Called if it failed to save the snapshot|
 
+### Facebook
+
+|name|parameters|return|description|
+|---|---|---|---|
+|||||
 
 # Log
 
@@ -165,9 +178,9 @@ Used tag for adb login:
 
 Example of a logcat command filtering only the Google Authentication service
 
-```shell
+```sh
 # We keep godot:V to listen to godot's log
-adb -d logcat godot:V GoogleAuthentication:V *:S
+adb -d logcat godot:V GoogleAuthentication:V AndroidRuntime:V ValidateServiceOp:V *:S
 ```
 
 # License
