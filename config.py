@@ -7,6 +7,7 @@ def configure(env):
         env.android_add_maven_repository("url 'https://maven.google.com'")
 
         gms_version = "11.8.0"
+        facebook_version = "4.31.0"
 
         # Firebase dependencies
         env.android_add_dependency("compile 'com.google.firebase:firebase-core:" + gms_version + "'")
@@ -21,7 +22,7 @@ def configure(env):
         env.android_add_gradle_plugin("com.google.gms.google-services")
 
         # Facebook dependencies
-        env.android_add_dependency("compile 'com.facebook.android:facebook-login:4.31.0'")
+        env.android_add_dependency("compile 'com.facebook.android:facebook-android-sdk:" + facebook_version + "'")
 
         env.android_add_java_dir("android/src")
 

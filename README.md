@@ -10,7 +10,11 @@ Android services for Godot Engine 2.1, including:
 * Facebook
    * Authentication
    * Share
-* Firebase **WIP**
+* Firebase
+   * User details
+   * Analytics **WIP**
+   * Invite **WIP**
+   * Notifaction **WIP**
 
 
 # Usage
@@ -133,7 +137,20 @@ func google_connect():
 
 |name|parameters|return|description|
 |---|---|---|---|
-|||||
+|facebook_initialize|int instance_id|void|Initialize and connect to facebook automatically. Facebook callbacks will be done using the instance_id. |
+|facebook_connect||void|Connect to facebook|
+|facebook_disconnect||void|Disconnect from facebook|
+|facebook_is_connected||boolean|Return `true` if connected, `false` otherwise|
+|facebook_share_link|String link|void|Share a link via facebook|
+|facebook_share_link_with_quote|String link, String quote|void|Share a link via facebook|
+|facebook_share_link_with_quote_and_hashtag|String link, String quote, String hashtag|void|Share a link via facebook|
+
+### Firebase
+
+|name|parameters|return|description|
+|---|---|---|---|
+|firebase_initialize|int instance_id|void|Initialize firebase. Firebase callbacks will be done using the instance_id. |
+|firebase_get_user_details||String|Return the current firebase user. Need to `parse_json` in order to exploit it.|
 
 ## Callbacks
 
@@ -161,9 +178,20 @@ func google_connect():
 
 ### Facebook
 
-|name|parameters|return|description|
-|---|---|---|---|
-|||||
+|name|parameters|description|
+|---|---|---|
+|facebook_auth_connected|String username|Called once connected to google play game service. username might be empty (not null)|
+|facebook_auth_disconnected||Called once disconnected|
+|facebook_auth_connect_failed|String message|Called when connection has failed. `message` is the reason of the failure|
+|facebook_auth_connect_cancelled||Called if the user has cancelled the login|
+|facebook_share_success|Called once link has been shared|
+|facebook_share_cancelled|Called if share has been cancelled|
+|facebook_share_failed|String message|Called if share has failed|
+
+### Firebase
+
+|name|parameters|description|
+|---|---|---|
 
 # Log
 
@@ -175,6 +203,9 @@ Used tag for adb login:
 |Google authentication|GoogleAuthentication|
 |Google leaderboards|GoogleLeaderboard|
 |Google snapshot|GoogleSnapshot|
+|Facebook authentication|FacebookAuthentication|
+|Facebook share|FacebookShare|
+|Firebase current user|FirebaseCurrentUser|
 
 Example of a logcat command filtering only the Google Authentication service
 
