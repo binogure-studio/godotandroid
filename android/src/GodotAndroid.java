@@ -34,6 +34,9 @@ import org.godotengine.godot.google.GoogleSnapshot;
 import org.godotengine.godot.facebook.FacebookAuthentication;
 import org.godotengine.godot.facebook.FacebookShare;
 
+// Import firebase
+import org.godotengine.godot.firebase.FirebaseCurrentUser;
+
 public class GodotAndroid extends Godot.SingletonBase {
 
 	public static final HashMap<String, Integer> GOOGLE_SNAPSHOT_RESOLUTION_POLICIES;
@@ -48,6 +51,8 @@ public class GodotAndroid extends Godot.SingletonBase {
 
 	private FacebookAuthentication facebookAuthentication;
 	private FacebookShare facebookShare;
+
+	private FirebaseCurrentUser firebaseCurrentUser;
 
 	static {
 		GOOGLE_SNAPSHOT_RESOLUTION_POLICIES = new HashMap<String, Integer>();
@@ -87,10 +92,29 @@ public class GodotAndroid extends Godot.SingletonBase {
 			"facebook_connect", "facebook_disconnect", "facebook_is_connected",
 
 			// FacebookShare
-			"facebook_share_link", "facebook_share_link_with_quote", "facebook_share_link_with_quote_and_hashtag"
+			"facebook_share_link", "facebook_share_link_with_quote", "facebook_share_link_with_quote_and_hashtag",
+
+			// Firebase
+			"firebase_initialize",
+
+			// FirebaseCurrentUser
+			"firebase_get_user_details"
 		});
 
 		activity = p_activity;
+	}
+
+	public void firebase_initialize(final int instance_id) {
+		activity.runOnUiThread(new Runnable() {
+			public void run() {
+					firebaseCurrentUser = FirebaseCurrentUser.getInstance(activity);
+					firebaseCurrentUser.init(instance_id);
+			}
+		});
+	}
+
+	public String firebase_get_user_details() {
+		return firebaseCurrentUser.get_user_details();
 	}
 
 	public void google_initialize(final int instance_id) {

@@ -70,14 +70,14 @@ public class FacebookAuthentication extends GodotAndroidCommon {
       @Override
       public void onCancel() {
         if (updateConnectionStatus(GodotConnectStatus.DISCONNECTED)) {
-          GodotLib.calldeferred(instance_id, "facebook_login_cancelled", new Object[] {});
+          GodotLib.calldeferred(instance_id, "facebook_auth_connect_cancelled", new Object[] {});
         }
       }
 
       @Override
       public void onError(FacebookException exception) {
         if (updateConnectionStatus(GodotConnectStatus.DISCONNECTED)) {
-          GodotLib.calldeferred(instance_id, "facebook_login_failed", new Object[] { exception.toString() });
+          GodotLib.calldeferred(instance_id, "facebook_auth_connect_failed", new Object[] { exception.toString() });
         }
       }
     });
@@ -95,11 +95,13 @@ public class FacebookAuthentication extends GodotAndroidCommon {
         if (task.isSuccessful()) {
           // Prevent to be called more than once
           if (updateConnectionStatus(GodotConnectStatus.CONNECTED)) {
-            GodotLib.calldeferred(instance_id, "facebook_login_success", new Object[]{ });
+            FirebaseUser firebaseUser = mAuth.getCurrentUser();
+
+            GodotLib.calldeferred(instance_id, "facebook_auth_connected", new Object[]{ firebaseUser.getDisplayName() });
           }
         } else {
           if (updateConnectionStatus(GodotConnectStatus.DISCONNECTED)) {
-            GodotLib.calldeferred(instance_id, "facebook_login_failed", new Object[]{ task.getException().toString() });
+            GodotLib.calldeferred(instance_id, "facebook_auth_connect_failed", new Object[]{ task.getException().toString() });
           }
         }
       }
@@ -110,10 +112,6 @@ public class FacebookAuthentication extends GodotAndroidCommon {
     this.instance_id = p_instance_id;
 
     onStart();
-  }
-
-  public void getUserProfile() {
-    // TODO
   }
 
   public void connect() {
@@ -128,6 +126,7 @@ public class FacebookAuthentication extends GodotAndroidCommon {
 
       // Nothing else to check here
       updateConnectionStatus(GodotConnectStatus.DISCONNECTED);
+      GodotLib.calldeferred(instance_id, "facebook_auth_disconnected", new Object[]{ });
     }
 	}
 

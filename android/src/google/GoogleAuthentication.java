@@ -94,29 +94,11 @@ public class GoogleAuthentication extends GodotAndroidCommon {
   }
 
 	public void onConnected() {
+		// Ensure we are not calling it twice in a row
 		if (updateConnectionStatus(GodotConnectStatus.CONNECTED)) {
+			FirebaseUser firebaseUser = mAuth.getCurrentUser();
 
-			// Ensure we are not calling it twice in a row
-			Log.d(TAG, "Google signed in, retrieving player's data");
-
-			PlayersClient playersClient = Games.getPlayersClient(activity, mAccount);
-
-			playersClient.getCurrentPlayer()
-			.addOnSuccessListener(new OnSuccessListener<Player>() {
-				@Override
-				public void onSuccess(Player player) {
-					GodotLib.calldeferred(instance_id, "google_auth_connected", new Object[] { player.getDisplayName() });
-				}
-			})
-			.addOnFailureListener(new OnFailureListener() {
-				@Override
-				public void onFailure(@NonNull Exception e) {
-					Log.d(TAG, "Failed to retrieved player's data");
-
-					// Signed in, but failed to retrieve player's data.
-					GodotLib.calldeferred(instance_id, "google_auth_connected", new Object[] { "" });
-				}
-			});
+			GodotLib.calldeferred(instance_id, "google_auth_connected", new Object[]{ firebaseUser.getDisplayName() });
 		}
 	}
 
