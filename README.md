@@ -120,37 +120,37 @@ func google_connect():
 
 |name|parameters|return|description|
 |---|---|---|---|
-|google_initialize|int instance_id|void|Initialize and connect to google play game service automatically. Google callbacks will be done using the instance_id. |
-|google_connect||void|Connect to google play game service|
-|google_disconnect||void|Disconnect from google play game service|
-|google_is_connected||boolean|Return `true` if connected, `false` otherwise|
-|google_leaderboard_submit|String id, int score|void|Submit a score to the given leaderboard|
-|google_leaderboard_show|String id|void|Show the given leaderboard|
-|google_leaderboard_showlist||void|Show the leaderboards' list|
-|google_snapshot_load|String name, int conflictResolutionPolicy|void|Load the given snapshot. `godot_android` exposes the following values for the resolution policy `RESOLUTION_POLICY_HIGHEST_PROGRESS`, `RESOLUTION_POLICY_LAST_KNOWN_GOOD`, `RESOLUTION_POLICY_LONGEST_PLAYTIME`, `RESOLUTION_POLICY_MANUAL`, `RESOLUTION_POLICY_MOST_RECENTLY_MODIFIED`|
-|google_snapshot_save|String name, String data, String description, boolean force|void|Save a given snapshot. Use the `force` to overwrite a conflicting savegame|
-|google_achievement_unlock|String id|void|Unlock the given achievement|
-|google_achievement_increment|String id, int amount|void|Increment by `amount` the given achievement|
-|google_achievement_show_list||void|Show the achievement list|
+|`google_initialize`|`int instance_id`|`void`|Initialize and connect to google play game service automatically. Google callbacks will be done using the instance_id. |
+|`google_connect`||`void`|Connect to google play game service|
+|`google_disconnect`||`void`|Disconnect from google play game service|
+|`google_is_connected`||`boolean`|Return `true` if connected, `false` otherwise|
+|`google_leaderboard_submit`|`String id, int score`|`void`|Submit a score to the given leaderboard|
+|`google_leaderboard_show`|`String id`|`void`|Show the given leaderboard|
+|`google_leaderboard_showlist`||`void`|Show the leaderboards' list|
+|`google_snapshot_load`|`String name, int conflictResolutionPolicy`|`void`|Load the given snapshot. `godot_android` exposes the following values for the resolution policy `RESOLUTION_POLICY_HIGHEST_PROGRESS`, `RESOLUTION_POLICY_LAST_KNOWN_GOOD`, `RESOLUTION_POLICY_LONGEST_PLAYTIME`, `RESOLUTION_POLICY_MANUAL`, `RESOLUTION_POLICY_MOST_RECENTLY_MODIFIED`|
+|`google_snapshot_save`|`String name, String data, String description, boolean force`|`void`|Save a given snapshot. Use the `force` to overwrite a conflicting savegame|
+|`google_achievement_unlock`|`String id`|`void`|Unlock the given achievement|
+|`google_achievement_increment`|`String id, int amount`|`void`|Increment by `amount` the given achievement|
+|`google_achievement_show_list`||`void`|Show the achievement list|
 
 ### Facebook
 
 |name|parameters|return|description|
 |---|---|---|---|
-|facebook_initialize|int instance_id|void|Initialize and connect to facebook automatically. Facebook callbacks will be done using the instance_id. |
-|facebook_connect||void|Connect to facebook|
-|facebook_disconnect||void|Disconnect from facebook|
-|facebook_is_connected||boolean|Return `true` if connected, `false` otherwise|
-|facebook_share_link|String link|void|Share a link via facebook|
-|facebook_share_link_with_quote|String link, String quote|void|Share a link via facebook|
-|facebook_share_link_with_quote_and_hashtag|String link, String quote, String hashtag|void|Share a link via facebook|
+|`facebook_initialize`|`int instance_id`|`void`|Initialize and connect to facebook automatically. Facebook callbacks will be done using the instance_id. |
+|`facebook_connect`||`void`|Connect to facebook|
+|`facebook_disconnect`||`void`|Disconnect from facebook|
+|`facebook_is_connected`||`boolean`|Return `true` if connected, `false` otherwise|
+|`facebook_share_link`|`String link`|`void`|Share a link via facebook|
+|`facebook_share_link_with_quote`|`String link, String quote`|`void`|Share a link via facebook|
+|`facebook_share_link_with_quote_and_hashtag`|`String link, String quote, String hashtag`|`void`|Share a link via facebook|
 
 ### Firebase
 
 |name|parameters|return|description|
 |---|---|---|---|
-|firebase_initialize|int instance_id|void|Initialize firebase. Firebase callbacks will be done using the instance_id. |
-|firebase_get_user_details||String|Return the current firebase user. Need to `parse_json` in order to exploit it.|
+|`firebase_initialize`|`int instance_id`|`void`|Initialize firebase. Firebase callbacks will be done using the instance_id. |
+|`firebase_get_user_details`||`String`|Return the current firebase user. Need to `parse_json` in order to exploit it.|
 
 ## Callbacks
 
@@ -158,35 +158,35 @@ func google_connect():
 
 |name|parameters|description|
 |---|---|---|
-|google_auth_connected|String username|Called once connected to google play game service. username might be empty (not null)|
-|google_auth_disconnected||Called once disconnected|
-|google_auth_connect_failed|String message|Called when connection has failed. `message` is the reason of the failure|
-|google_achievement_unlocked|String id|Called once the achievement has been unlocked|
-|google_achievement_unlock_failed|String message|Called if the achievement unlocking has failed|
-|google_achievement_increased|String id, int amount|Called once the achivement has been increased|
-|google_achievement_increment_failed|String message|Called if the achievement increment has failed|
-|google_leaderboard_submitted|String id, int score|Called once the leaderboard hs been updated|
-|google_leaderboard_submit_failed|String message|Called if the leaderboard has not been updated|
-|google_leaderboard_showd|String id|Called once the leaderboard has been showd|
-|google_leaderboard_show_failed|String message|Called if there is an issue when trying to show the leaderboard|
-|google_leaderboard_showlisted||Called once the leaderboards have been listed|
-|google_leaderboard_showlist_failed|String message|Call if it failed to show the leaderboards' list|
-|google_snapshot_loaded|String data|Called once the snapshot has been loaded|
-|google_snapshot_load_failed|String message|Called if it failed to load the snapshot|
-|google_snapshot_saved||Called once the snapshot has been saved|
-|google_snapshot_save_failed|String message|Called if it failed to save the snapshot|
+|`google_auth_connected`|`String username`|Called once connected to google play game service. username might be empty (not null)|
+|`google_auth_disconnected`||Called once disconnected|
+|`google_auth_connect_failed`|`String message`|Called when connection has failed. `message` is the reason of the failure|
+|`google_achievement_unlocked`|`String id`|Called once the achievement has been unlocked|
+|`google_achievement_unlock_failed`|`String message`|Called if the achievement unlocking has failed|
+|`google_achievement_increased`|`String id, int amount`|Called once the achivement has been increased|
+|`google_achievement_increment_failed`|`String message`|Called if the achievement increment has failed|
+|`google_leaderboard_submitted`|`String id, int score`|Called once the leaderboard hs been updated|
+|`google_leaderboard_submit_failed`|`String message`|Called if the leaderboard has not been updated|
+|`google_leaderboard_showd`|`String id`|Called once the leaderboard has been showd|
+|`google_leaderboard_show_failed`|`String message`|Called if there is an issue when trying to show the leaderboard|
+|`google_leaderboard_showlisted`||Called once the leaderboards have been listed|
+|`google_leaderboard_showlist_failed`|`String message`|Call if it failed to show the leaderboards' list|
+|`google_snapshot_loaded`|`String data`|Called once the snapshot has been loaded|
+|`google_snapshot_load_failed`|`String message`|Called if it failed to load the snapshot|
+|`google_snapshot_saved`||Called once the snapshot has been saved|
+|`google_snapshot_save_failed`|`String message`|Called if it failed to save the snapshot|
 
 ### Facebook
 
 |name|parameters|description|
 |---|---|---|
-|facebook_auth_connected|String username|Called once connected to google play game service. username might be empty (not null)|
-|facebook_auth_disconnected||Called once disconnected|
-|facebook_auth_connect_failed|String message|Called when connection has failed. `message` is the reason of the failure|
-|facebook_auth_connect_cancelled||Called if the user has cancelled the login|
-|facebook_share_success|Called once link has been shared|
-|facebook_share_cancelled|Called if share has been cancelled|
-|facebook_share_failed|String message|Called if share has failed|
+|`facebook_auth_connected`|`String username`|Called once connected to google play game service. username might be empty (not null)|
+|`facebook_auth_disconnected`||Called once disconnected|
+|`facebook_auth_connect_failed`|`String message`|Called when connection has failed. `message` is the reason of the failure|
+|`facebook_auth_connect_cancelled`||Called if the user has cancelled the login|
+|`facebook_share_success`||Called once link has been shared|
+|`facebook_share_cancelled`||Called if share has been cancelled|
+|`facebook_share_failed`|`String message`|Called if share has failed|
 
 ### Firebase
 
