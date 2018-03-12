@@ -157,9 +157,9 @@ func google_connect():
 |`firebase_unlock_achievement`|`String achievement`|`void`|Log event `unlock_achievement`|
 |`firebase_join_group`|`String group`|`void`|Log event `join_group`|
 |`firebase_login`||`void`|Log event `login`|
-|`firebase_level_up`|`String name`||`void`|Log event `level_up`|
-|`firebase_post_score`|`int score`||`void`|Log event `post_score`|
-|`firebase_select_content`|`String name`||`void`|Log event `select_content`|
+|`firebase_level_up`|`String name`|`void`|Log event `level_up`||
+|`firebase_post_score`|`int score`|`void`|Log event `post_score`||
+|`firebase_select_content`|`String name`|`void`|Log event `select_content`||
 |`firebase_share`||`void`|Log event `share`|
 |`firebase_invite`|`String message, String action_text, [String custom_image_uri], [String deep_link_uri]`|`void`|Send an application invitation (**WIP** on `deepLink`)|
 
