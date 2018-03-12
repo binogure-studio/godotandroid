@@ -352,6 +352,11 @@ public class GodotAndroid extends Godot.SingletonBase {
 		// Trigger Facebook
 		facebookAuthentication.onActivityResult(requestCode, resultCode, data);
 		facebookShare.onActivityResult(requestCode, resultCode, data);
+
+		// Trigger Firebase
+		firebaseCurrentUser.onActivityResult(requestCode, resultCode, data);
+		firebaseCurrentAnalytics.onActivityResult(requestCode, resultCode, data);
+		firebaseCurrentInvite.onActivityResult(requestCode, resultCode, data);
 	}
 
 	protected void onMainPause () {
@@ -364,6 +369,11 @@ public class GodotAndroid extends Godot.SingletonBase {
 		// Trigger Facebook
 		facebookAuthentication.onPause();
 		facebookShare.onPause();
+
+		// Trigger Firebase
+		firebaseCurrentUser.onPause();
+		firebaseCurrentAnalytics.onPause();
+		firebaseCurrentInvite.onPause();
 	}
 
 	protected void onMainResume () {
@@ -376,6 +386,11 @@ public class GodotAndroid extends Godot.SingletonBase {
 		// Trigger Facebook
 		facebookAuthentication.onResume();
 		facebookShare.onResume();
+
+		// Trigger Firebase
+		firebaseCurrentUser.onResume();
+		firebaseCurrentAnalytics.onResume();
+		firebaseCurrentInvite.onResume();
 	}
 
 	protected void onMainDestroy () {
@@ -388,5 +403,10 @@ public class GodotAndroid extends Godot.SingletonBase {
 		// Trigger Facebook
 		facebookAuthentication.onStop();
 		facebookShare.onStop();
+
+		// Trigger Firebase
+		firebaseCurrentUser.onStop();
+		firebaseCurrentAnalytics.onStop();
+		firebaseCurrentInvite.onStop();
 	}
 }
