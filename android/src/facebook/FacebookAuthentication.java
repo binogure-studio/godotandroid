@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.hardware.camera2.params.Face;
 import android.os.Bundle;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
@@ -147,17 +148,26 @@ public class FacebookAuthentication extends GodotAndroidCommon {
 
 	public void onStart() {
     if (updateConnectionStatus(GodotConnectStatus.CONNECTING)) {
-      Log.d(TAG, "Trying to connect silently");
+			AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+				@Override
+				protected Void doInBackground(Void... params) {
+          Log.d(TAG, "Trying to connect silently");
 
-      AccessToken accessToken = AccessToken.getCurrentAccessToken();
+          AccessToken accessToken = AccessToken.getCurrentAccessToken();
 
-      if (accessToken != null && !accessToken.isExpired()) {
-        firebaseAuthWithFacebook(accessToken);
-      } else {
-        updateConnectionStatus(GodotConnectStatus.DISCONNECTED);
+          if (accessToken != null && !accessToken.isExpired()) {
+            firebaseAuthWithFacebook(accessToken);
+          } else {
+            updateConnectionStatus(GodotConnectStatus.DISCONNECTED);
 
-        Log.d(TAG, "Failed to connect silently");
-      }
+            Log.d(TAG, "Failed to connect silently");
+          }
+
+					return null;
+				}
+			};
+
+			task.execute();
     }
 	}
 

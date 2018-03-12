@@ -118,6 +118,20 @@ public class GodotAndroid extends Godot.SingletonBase {
 		});
 
 		activity = p_activity;
+
+		// Initiliaze singletons here
+		firebaseCurrentUser = FirebaseCurrentUser.getInstance(activity);
+		firebaseCurrentAnalytics = FirebaseCurrentAnalytics.getInstance(activity);
+		firebaseCurrentInvite = FirebaseCurrentInvite.getInstance(activity);
+		firebaseCurrentNotification = FirebaseCurrentNotification.getInstance(activity);
+
+		googleAchievements = GoogleAchievements.getInstance(activity);
+		googleAuthentication = GoogleAuthentication.getInstance(activity);
+		googleLeaderboard = GoogleLeaderboard.getInstance(activity);
+		googleSnapshot = GoogleSnapshot.getInstance(activity);
+
+		facebookAuthentication = FacebookAuthentication.getInstance(activity);
+		facebookShare = FacebookShare.getInstance(activity);
 	}
 
 	public Dictionary get_google_resolution_policies() {
@@ -127,17 +141,10 @@ public class GodotAndroid extends Godot.SingletonBase {
 	public void firebase_initialize(final int instance_id) {
 		activity.runOnUiThread(new Runnable() {
 			public void run() {
-					firebaseCurrentUser = FirebaseCurrentUser.getInstance(activity);
-					firebaseCurrentUser.init(instance_id);
-
-					firebaseCurrentAnalytics = FirebaseCurrentAnalytics.getInstance(activity);
-					firebaseCurrentAnalytics.init(instance_id);
-
-					firebaseCurrentInvite = FirebaseCurrentInvite.getInstance(activity);
-					firebaseCurrentInvite.init(instance_id);
-
-					firebaseCurrentNotification = FirebaseCurrentNotification.getInstance(activity);
-					firebaseCurrentNotification.init(instance_id);
+				firebaseCurrentUser.init(instance_id);
+				firebaseCurrentAnalytics.init(instance_id);
+				firebaseCurrentInvite.init(instance_id);
+				firebaseCurrentNotification.init(instance_id);
 			}
 		});
 	}
@@ -209,16 +216,9 @@ public class GodotAndroid extends Godot.SingletonBase {
 	public void google_initialize(final int instance_id) {
 		activity.runOnUiThread(new Runnable() {
 			public void run() {
-				googleAchievements = GoogleAchievements.getInstance(activity);
 				googleAchievements.init(instance_id);
-
-				googleAuthentication = GoogleAuthentication.getInstance(activity);
 				googleAuthentication.init(instance_id);
-
-				googleLeaderboard = GoogleLeaderboard.getInstance(activity);
 				googleLeaderboard.init(instance_id);
-
-				googleSnapshot = GoogleSnapshot.getInstance(activity);
 				googleSnapshot.init(instance_id);
 			}
 		});
@@ -227,11 +227,8 @@ public class GodotAndroid extends Godot.SingletonBase {
 	public void facebook_initialize(final int instance_id) {
 		activity.runOnUiThread(new Runnable() {
 			public void run() {
-					facebookAuthentication = FacebookAuthentication.getInstance(activity);
-					facebookAuthentication.init(instance_id);
-
-					facebookShare = FacebookShare.getInstance(activity);
-					facebookShare.init(instance_id);
+				facebookAuthentication.init(instance_id);
+				facebookShare.init(instance_id);
 			}
 		});
 	}
