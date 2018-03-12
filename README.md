@@ -16,7 +16,6 @@ Android services for Godot Engine 2.1, including:
    * Invite
    * Notification **WIP**
 
-
 # Usage
 
 ## Preparing godot-android module
@@ -209,7 +208,7 @@ func google_connect():
 
 # Log
 
-Used tag for adb login:
+Used tag for `adb log`:
 
 |Service|Tag|
 |---|---|
@@ -220,6 +219,8 @@ Used tag for adb login:
 |Facebook authentication|FacebookAuthentication|
 |Facebook share|FacebookShare|
 |Firebase current user|FirebaseCurrentUser|
+|Firebase current analytics|FirebaseCurrentAnalytics|
+|Firebase current invite|FirebaseCurrentInvite|
 
 Example of a logcat command filtering only the Google Authentication service
 
