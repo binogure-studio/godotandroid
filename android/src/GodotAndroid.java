@@ -38,6 +38,7 @@ import org.godotengine.godot.facebook.FacebookShare;
 import org.godotengine.godot.firebase.FirebaseCurrentUser;
 import org.godotengine.godot.firebase.FirebaseCurrentAnalytics;
 import org.godotengine.godot.firebase.FirebaseCurrentInvite;
+import org.godotengine.godot.firebase.FirebaseCurrentNotification;
 
 public class GodotAndroid extends Godot.SingletonBase {
 
@@ -55,6 +56,7 @@ public class GodotAndroid extends Godot.SingletonBase {
 	private FirebaseCurrentUser firebaseCurrentUser;
 	private FirebaseCurrentAnalytics firebaseCurrentAnalytics;
 	private FirebaseCurrentInvite firebaseCurrentInvite;
+	private FirebaseCurrentNotification firebaseCurrentNotification;
 
 	private static final HashMap<String, Integer> GOOGLE_SNAPSHOT_RESOLUTION_POLICIES;
 
@@ -105,9 +107,9 @@ public class GodotAndroid extends Godot.SingletonBase {
 			"firebase_get_user_details",
 
 			// FirebaseCurrentAnalytics
-			"firebase_log_event", "firebase_tutorial_begin", "firebase_tutorial_complete", "firebase_purchase",
-			"firebase_unlock_achievement", "firebase_join_group", "firebase_login", "firebase_level_up", 
-			"firebase_post_score", "firebase_select_content", "firebase_share",
+			"firebase_analytics_log_event", "firebase_analytics_tutorial_begin", "firebase_analytics_tutorial_complete", "firebase_analytics_purchase",
+			"firebase_analytics_unlock_achievement", "firebase_analytics_join_group", "firebase_analytics_login", "firebase_analytics_level_up", 
+			"firebase_analytics_post_score", "firebase_analytics_select_content", "firebase_analytics_share",
 
 			// FirebaseCurrentInvite
 			"firebase_invite"
@@ -131,6 +133,9 @@ public class GodotAndroid extends Godot.SingletonBase {
 
 					firebaseCurrentInvite = FirebaseCurrentInvite.getInstance(activity);
 					firebaseCurrentInvite.init(instance_id);
+
+					firebaseCurrentNotification = FirebaseCurrentNotification.getInstance(activity);
+					firebaseCurrentNotification.init(instance_id);
 			}
 		});
 	}
@@ -155,47 +160,47 @@ public class GodotAndroid extends Godot.SingletonBase {
 		return firebaseCurrentUser.get_user_details();
 	}
 
-	public void firebase_log_event(final String event_name, final HashMap<String, Object> params) {
+	public void firebase_analytics_log_event(final String event_name, final HashMap<String, Object> params) {
 		firebaseCurrentAnalytics.log_event(event_name, params);
 	}
 
-	public void firebase_tutorial_begin(final String name) {
+	public void firebase_analytics_tutorial_begin(final String name) {
 		firebaseCurrentAnalytics.tutorial_begin(name);
 	}
 
-	public void firebase_tutorial_complete(final String name) {
+	public void firebase_analytics_tutorial_complete(final String name) {
 		firebaseCurrentAnalytics.tutorial_complete(name);
 	}
 
-	public void firebase_purchase(final String item) {
+	public void firebase_analytics_purchase(final String item) {
 		firebaseCurrentAnalytics.purchase(item);
 	}
 
-	public void firebase_unlock_achievement(final String achievement) {
+	public void firebase_analytics_unlock_achievement(final String achievement) {
 		firebaseCurrentAnalytics.unlock_achievement(achievement);
 	}
 
-	public void firebase_join_group(final String group) {
+	public void firebase_analytics_join_group(final String group) {
 		firebaseCurrentAnalytics.join_group(group);
 	}
 
-	public void firebase_login() {
+	public void firebase_analytics_login() {
 		firebaseCurrentAnalytics.login();
 	}
 
-	public void firebase_level_up(final String name) {
+	public void firebase_analytics_level_up(final String name) {
 		firebaseCurrentAnalytics.level_up(name);
 	}
 
-	public void firebase_post_score(final int score) {
+	public void firebase_analytics_post_score(final int score) {
 		firebaseCurrentAnalytics.post_score(score);
 	}
 
-	public void firebase_select_content(final String name) {
+	public void firebase_analytics_select_content(final String name) {
 		firebaseCurrentAnalytics.select_content(name);
 	}
 
-	public void firebase_share() {
+	public void firebase_analytics_share() {
 		firebaseCurrentAnalytics.share();
 	}
 
@@ -357,6 +362,7 @@ public class GodotAndroid extends Godot.SingletonBase {
 		firebaseCurrentUser.onActivityResult(requestCode, resultCode, data);
 		firebaseCurrentAnalytics.onActivityResult(requestCode, resultCode, data);
 		firebaseCurrentInvite.onActivityResult(requestCode, resultCode, data);
+		firebaseCurrentNotification.onActivityResult(requestCode, resultCode, data);
 	}
 
 	protected void onMainPause () {
@@ -374,6 +380,7 @@ public class GodotAndroid extends Godot.SingletonBase {
 		firebaseCurrentUser.onPause();
 		firebaseCurrentAnalytics.onPause();
 		firebaseCurrentInvite.onPause();
+		firebaseCurrentNotification.onPause();
 	}
 
 	protected void onMainResume () {
@@ -391,6 +398,7 @@ public class GodotAndroid extends Godot.SingletonBase {
 		firebaseCurrentUser.onResume();
 		firebaseCurrentAnalytics.onResume();
 		firebaseCurrentInvite.onResume();
+		firebaseCurrentNotification.onResume();
 	}
 
 	protected void onMainDestroy () {
@@ -408,5 +416,6 @@ public class GodotAndroid extends Godot.SingletonBase {
 		firebaseCurrentUser.onStop();
 		firebaseCurrentAnalytics.onStop();
 		firebaseCurrentInvite.onStop();
+		firebaseCurrentNotification.onStop();
 	}
 }

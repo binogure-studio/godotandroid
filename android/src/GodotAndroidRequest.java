@@ -6,4 +6,5 @@ public class GodotAndroidRequest {
   public static final int GOOGLE_LEADERBOARD_REQUEST = 9003;
 
   public static final int FIREBASE_INVITE_REQUEST = 0;
+  public static final int FIREBASE_NOTIFICATION_REQUEST = 8001;
 }

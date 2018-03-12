@@ -18,7 +18,7 @@ Android services for Godot Engine 2.1, including:
    * User details
    * Analytics
    * Invite
-   * Notification **WIP**
+   * Notification
 
 # Usage
 
@@ -44,6 +44,44 @@ Copy `google-services.json` file into `godot/platform/android/java/`.
 #### Note:
 
 I strongly recommand you to have a `google-services.java` for debug purpose and another one for your release. (put them respectivly in `godot/platform/android/java/src/debug` and `godot/platform/android/java/src/release`, create the directories if needed).
+
+#### Firebase notifications
+
+##### Icons
+
+Replace `notification-icon.png` in following directories for yours:
+
+* `godotandroid/res/drawable-hdpi`
+* `godotandroid/res/drawable-mdpi`
+* `godotandroid/res/drawable-xhdpi`
+
+##### Color
+
+Update the content of `godotandroid/android/AndroidManifestChunk.xml`:
+
+```xml
+<!-- Set color used with incoming notification messages. This is used when no color is set for the incoming notification message. See README(https://goo.gl/6BKBk7) for more. -->
+<meta-data android:name="com.google.firebase.messaging.default_notification_color" android:resource="@color/colorAccent" />
+```
+
+Add your color in `godotandroid/res/values/colors.xml`.
+
+Example:
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#039BE5</color>
+    <color name="colorPrimaryDark">#0288D1</color>
+    <color name="colorAccent">#FFA000</color>
+
+    <color name="blue_grey_500">#607D8B</color>
+    <color name="blue_grey_600">#546E7A</color>
+    <color name="blue_grey_700">#455A64</color>
+    <color name="blue_grey_800">#37474F</color>
+    <color name="blue_grey_900">#263238</color>
+</resources>
+
+```
 
 ### Compiling android's templates (Linux)
 
@@ -153,17 +191,17 @@ func google_connect():
 |---|---|---|---|
 |`firebase_initialize`|`int instance_id`|`void`|Initialize firebase. Firebase callbacks will be done using the instance_id. |
 |`firebase_get_user_details`||`String`|Return the current firebase user. Need to `parse_json` in order to exploit it.|
-|`firebase_log_event`|`String event_name, HashMap<String, Object> params`|`void`|Log custom event|
-|`firebase_tutorial_begin`|`String name`|`void`|Log event `tutoriel_begin`|
-|`firebase_tutorial_complete`|`String name`|`void`|Log event `tutorial_complete`|
-|`firebase_purchase`|`String item`|`void`|Log event `purchase`|
-|`firebase_unlock_achievement`|`String achievement`|`void`|Log event `unlock_achievement`|
-|`firebase_join_group`|`String group`|`void`|Log event `join_group`|
-|`firebase_login`||`void`|Log event `login`|
-|`firebase_level_up`|`String name`|`void`|Log event `level_up`||
-|`firebase_post_score`|`int score`|`void`|Log event `post_score`||
-|`firebase_select_content`|`String name`|`void`|Log event `select_content`||
-|`firebase_share`||`void`|Log event `share`|
+|`firebase_analytics_log_event`|`String event_name, HashMap<String, Object> params`|`void`|Log custom event|
+|`firebase_analytics_tutorial_begin`|`String name`|`void`|Log event `tutoriel_begin`|
+|`firebase_analytics_tutorial_complete`|`String name`|`void`|Log event `tutorial_complete`|
+|`firebase_analytics_purchase`|`String item`|`void`|Log event `purchase`|
+|`firebase_analytics_unlock_achievement`|`String achievement`|`void`|Log event `unlock_achievement`|
+|`firebase_analytics_join_group`|`String group`|`void`|Log event `join_group`|
+|`firebase_analytics_login`||`void`|Log event `login`|
+|`firebase_analytics_level_up`|`String name`|`void`|Log event `level_up`||
+|`firebase_analytics_post_score`|`int score`|`void`|Log event `post_score`||
+|`firebase_analytics_select_content`|`String name`|`void`|Log event `select_content`||
+|`firebase_analytics_share`||`void`|Log event `share`|
 |`firebase_invite`|`String message, String action_text, [String custom_image_uri], [String deep_link_uri]`|`void`|Send an application invitation (**WIP** on `deepLink`)|
 
 
@@ -209,6 +247,7 @@ func google_connect():
 |---|---|---|
 |`firebase_invite_success`|`String id`|Called once the application invitation has been sent|
 |`firebase_invite_failed`|`String message`|Called if it failed to send the application invitation|
+|`firebase_notification`|`String title, String body, String tag, String link, Dictionary payload`|Called when a push notification has been received|
 
 # Log
 
@@ -225,6 +264,7 @@ Used tag for `adb log`:
 |Firebase current user|FirebaseCurrentUser|
 |Firebase current analytics|FirebaseCurrentAnalytics|
 |Firebase current invite|FirebaseCurrentInvite|
+|Firebase current notification|FirebaseCurrentNotification|
 
 Example of a logcat command filtering only the Google Authentication service
 

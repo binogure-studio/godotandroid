@@ -20,7 +20,6 @@ import com.godot.game.R;
 
 public class FirebaseCurrentInvite {
 	private static final String TAG = "FirebaseCurrentInvite";
-  private static final int FIREBASE_INVITE_REQUEST = 0;
 
   private static int instance_id;
 	private static Activity activity = null;

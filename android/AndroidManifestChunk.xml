@@ -9,3 +9,9 @@
 
 <!-- Register Play Game -->
 <meta-data android:name="com.google.android.gms.games.APP_ID" android:value="@string/google_play_app_id"/>
+
+<!-- Set custom default icon. This is used when no icon is set for incoming notification messages. See README(https://goo.gl/l4GJaQ) for more. -->
+<meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@drawable/notification_icon" />
+
+<!-- Set color used with incoming notification messages. This is used when no color is set for the incoming notification message. See README(https://goo.gl/6BKBk7) for more. -->
+<meta-data android:name="com.google.firebase.messaging.default_notification_color" android:resource="@color/colorAccent" />
