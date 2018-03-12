@@ -1,13 +1,17 @@
 package org.godotengine.godot.firebase;
 
 import android.app.Activity;
-import android.util.Log;
 import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
 
 import org.godotengine.godot.GodotLib;
+import org.godotengine.godot.Dictionary;
 import org.godotengine.godot.GodotAndroidRequest;
 
-import com.google.firebase.auth.FirebaseAuth;
+
+import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,8 +23,6 @@ public class FirebaseCurrentNotification extends FirebaseMessagingService {
 	private static Activity activity = null;
   private static FirebaseCurrentNotification mInstance = null;
 
-  private FirebaseAuth mAuth;
-
 	public static synchronized FirebaseCurrentNotification getInstance (Activity p_activity) {
 		if (mInstance == null) {
 			mInstance = new FirebaseCurrentNotification(p_activity);
@@ -31,13 +33,11 @@ public class FirebaseCurrentNotification extends FirebaseMessagingService {
 
 	public FirebaseCurrentNotification(Activity p_activity) {
     activity = p_activity;
-
-		mAuth = FirebaseAuth.getInstance();
 	}
 
   @Override
   public void onMessageReceived(RemoteMessage remoteMessage) {
-    Bundle notification = remoteMessage.getNotification();
+    RemoteMessage.Notification notification = remoteMessage.getNotification();
 
     // Check if message contains a notification payload.
     if (notification != null) {
@@ -47,7 +47,7 @@ public class FirebaseCurrentNotification extends FirebaseMessagingService {
 
       payload.putAll(payloadMap);
 
-      String title = notification.geTitle();
+      String title = notification.getTitle();
       String body = notification.getBody();
       String tag = notification.getTag();
       String link = notification.getLink().toString();
