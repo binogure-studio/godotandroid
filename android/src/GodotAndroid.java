@@ -36,10 +36,9 @@ import org.godotengine.godot.facebook.FacebookShare;
 
 // Import firebase
 import org.godotengine.godot.firebase.FirebaseCurrentUser;
+import org.godotengine.godot.firebase.FirebaseCurrentAnalytics;
 
 public class GodotAndroid extends Godot.SingletonBase {
-
-	public static final HashMap<String, Integer> GOOGLE_SNAPSHOT_RESOLUTION_POLICIES;
 
 	private static Context context;
 	private static Activity activity;
@@ -53,6 +52,9 @@ public class GodotAndroid extends Godot.SingletonBase {
 	private FacebookShare facebookShare;
 
 	private FirebaseCurrentUser firebaseCurrentUser;
+	private FirebaseCurrentAnalytics firebaseCurrentAnalytics;
+
+	private static final HashMap<String, Integer> GOOGLE_SNAPSHOT_RESOLUTION_POLICIES;
 
 	static {
 		GOOGLE_SNAPSHOT_RESOLUTION_POLICIES = new HashMap<String, Integer>();
@@ -99,9 +101,18 @@ public class GodotAndroid extends Godot.SingletonBase {
 
 			// FirebaseCurrentUser
 			"firebase_get_user_details"
+
+			// FirebaseCurrentAnalytics
+			"firebase_log_event", "firebase_tutorial_begin", "firebase_tutorial_complete", "firebase_purchase",
+			"firebase_unlock_achievement", "firebase_join_group", "firebase_login", "firebase_level_up", 
+			"firebase_post_score", "firebase_select_content", "firebase_share"
 		});
 
 		activity = p_activity;
+	}
+
+	public HashMap<String, Integer> get_google_resolution_policies() {
+		return GOOGLE_SNAPSHOT_RESOLUTION_POLICIES;
 	}
 
 	public void firebase_initialize(final int instance_id) {
@@ -109,12 +120,59 @@ public class GodotAndroid extends Godot.SingletonBase {
 			public void run() {
 					firebaseCurrentUser = FirebaseCurrentUser.getInstance(activity);
 					firebaseCurrentUser.init(instance_id);
+
+					firebaseCurrentAnalytics = FirebaseCurrentAnalytics.getInstance(activity);
+					firebaseCurrentAnalytics.init(instance_id);
 			}
 		});
 	}
 
 	public String firebase_get_user_details() {
 		return firebaseCurrentUser.get_user_details();
+	}
+
+	public void firebase_log_event(final String event_name, final HashMap<String, Object> params) {
+		firebaseCurrentAnalytics.firebase_log_event(event_name, params);
+	}
+
+	public void firebase_tutorial_begin(final String name) {
+		firebaseCurrentAnalytics.firebase_tutorial_begin(name);
+	}
+
+	public void firebase_tutorial_complete(final String name) {
+		firebaseCurrentAnalytics.firebase_tutorial_complete(name);
+	}
+
+	public void firebase_purchase(final String item) {
+		firebaseCurrentAnalytics.firebase_purchase(item);
+	}
+
+	public void firebase_unlock_achievement(final String achievement) {
+		firebaseCurrentAnalytics.firebase_unlock_achievement(achievement);
+	}
+
+	public void firebase_join_group(final String group) {
+		firebaseCurrentAnalytics.firebase_join_group(group);
+	}
+
+	public void firebase_login() {
+		firebaseCurrentAnalytics.firebase_login();
+	}
+
+	public void firebase_level_up(final String name) {
+		firebaseCurrentAnalytics.firebase_level_up(name);
+	}
+
+	public void firebase_post_score(final int score) {
+		firebaseCurrentAnalytics.firebase_post_score(score);
+	}
+
+	public void firebase_select_content(final String name) {
+		firebaseCurrentAnalytics.firebase_select_content(name);
+	}
+
+	public void firebase_share() {
+		firebaseCurrentAnalytics.firebase_share();
 	}
 
 	public void google_initialize(final int instance_id) {

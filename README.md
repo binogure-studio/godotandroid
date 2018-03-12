@@ -12,7 +12,7 @@ Android services for Godot Engine 2.1, including:
    * Share
 * Firebase
    * User details
-   * Analytics **WIP**
+   * Analytics
    * Invite **WIP**
    * Notifaction **WIP**
 
@@ -151,6 +151,18 @@ func google_connect():
 |---|---|---|---|
 |`firebase_initialize`|`int instance_id`|`void`|Initialize firebase. Firebase callbacks will be done using the instance_id. |
 |`firebase_get_user_details`||`String`|Return the current firebase user. Need to `parse_json` in order to exploit it.|
+|`firebase_log_event`|`String event_name, HashMap<String, Object> params`|`void`|Log custom event|
+|`firebase_tutorial_begin`|`String name`|`void`|Log event `tutoriel_begin`|
+|`firebase_tutorial_complete`|`String name`|`void`|Log event `tutorial_complete`|
+|`firebase_purchase`|`String item`|`void`|Log event `purchase`|
+|`firebase_unlock_achievement`|`String achievement`|`void`|Log event `unlock_achievement`|
+|`firebase_join_group`|`String group`|`void`|Log event `join_group`|
+|`firebase_login`||`void`|Log event `login`|
+|`firebase_level_up`|`String name`||`void`|Log event `level_up`|
+|`firebase_post_score`|`int score`||`void`|Log event `post_score`|
+|`firebase_select_content`|`String name`||`void`|Log event `select_content`|
+|`firebase_share`||`void`|Log event `share`|
+
 
 ## Callbacks
 
