@@ -7,6 +7,8 @@ import android.util.Log;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 
+import org.godotengine.godot.Dictionary;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.HashMap;
@@ -41,7 +43,7 @@ public class FirebaseCurrentAnalytics {
     onStart();
   }
 
-	public void log_event(final String eventName, final HashMap<String, Object> params) {
+	public void log_event(final String eventName, final Dictionary params) {
 		Bundle bundle = new Bundle();
 
 		for (Map.Entry param : params.entrySet()) {
@@ -67,7 +69,7 @@ public class FirebaseCurrentAnalytics {
 	}
 
 	public void tutorial_begin(final String name) {
-		HashMap<String, Object> params = new HashMap<String, Object>();
+		Dictionary params = new Dictionary();
 
 		params.put(FirebaseAnalytics.Param.LEVEL, name);
 
@@ -75,7 +77,7 @@ public class FirebaseCurrentAnalytics {
 	}
 
 	public void tutorial_complete(final String name) {
-		HashMap<String, Object> params = new HashMap<String, Object>();
+		Dictionary params = new Dictionary();
 
 		params.put(FirebaseAnalytics.Param.LEVEL, name);
 
@@ -83,7 +85,7 @@ public class FirebaseCurrentAnalytics {
 	}
 
 	public void purchase(final String item) {
-		HashMap<String, Object> params = new HashMap<String, Object>();
+		Dictionary params = new Dictionary();
 
 		params.put(FirebaseAnalytics.Param.ITEM_ID, item);
 
@@ -91,7 +93,7 @@ public class FirebaseCurrentAnalytics {
 	}
 
 	public void unlock_achievement(final String achievement) {
-		HashMap<String, Object> params = new HashMap<String, Object>();
+		Dictionary params = new Dictionary();
 
 		params.put(FirebaseAnalytics.Param.ACHIEVEMENT_ID, achievement);
 
@@ -99,7 +101,7 @@ public class FirebaseCurrentAnalytics {
 	}
 
 	public void join_group(final String group) {
-		HashMap<String, Object> params = new HashMap<String, Object>();
+		Dictionary params = new Dictionary();
 
 		params.put(FirebaseAnalytics.Param.GROUP_ID, group);
 
@@ -107,13 +109,13 @@ public class FirebaseCurrentAnalytics {
 	}
 
 	public void login() {
-		HashMap<String, Object> params = new HashMap<String, Object>();
+		Dictionary params = new Dictionary();
 
 		log_event(FirebaseAnalytics.Event.LOGIN, params);
 	}
 
 	public void level_up(final String name) {
-		HashMap<String, Object> params = new HashMap<String, Object>();
+		Dictionary params = new Dictionary();
 
 		params.put(FirebaseAnalytics.Param.LEVEL, name);
 
@@ -121,7 +123,7 @@ public class FirebaseCurrentAnalytics {
 	}
 
 	public void post_score(final int score) {
-		HashMap<String, Object> params = new HashMap<String, Object>();
+		Dictionary params = new Dictionary();
 
 		params.put(FirebaseAnalytics.Param.SCORE, score);
 
@@ -129,7 +131,7 @@ public class FirebaseCurrentAnalytics {
 	}
 
 	public void select_content(final String name) {
-		HashMap<String, Object> params = new HashMap<String, Object>();
+		Dictionary params = new Dictionary();
 
 		params.put(FirebaseAnalytics.Param.CONTENT, name);
 
@@ -137,7 +139,7 @@ public class FirebaseCurrentAnalytics {
 	}
 
 	public void share() {
-		HashMap<String, Object> params = new HashMap<String, Object>();
+		Dictionary params = new Dictionary();
 
 		log_event(FirebaseAnalytics.Event.SHARE, params);
 	}

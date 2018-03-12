@@ -24,6 +24,8 @@ import java.util.HashMap;
 import org.json.JSONObject;
 import org.json.JSONException;
 
+import org.godotengine.godot.Dictionary;
+
 // Import google play service
 import org.godotengine.godot.google.GoogleAchievements;
 import org.godotengine.godot.google.GoogleAuthentication;
@@ -58,10 +60,10 @@ public class GodotAndroid extends Godot.SingletonBase {
 	private FirebaseCurrentInvite firebaseCurrentInvite;
 	private FirebaseCurrentNotification firebaseCurrentNotification;
 
-	private static final HashMap<String, Integer> GOOGLE_SNAPSHOT_RESOLUTION_POLICIES;
+	public static final Dictionary GOOGLE_SNAPSHOT_RESOLUTION_POLICIES;
 
 	static {
-		GOOGLE_SNAPSHOT_RESOLUTION_POLICIES = new HashMap<String, Integer>();
+		GOOGLE_SNAPSHOT_RESOLUTION_POLICIES = new Dictionary();
 
 		GOOGLE_SNAPSHOT_RESOLUTION_POLICIES.put("RESOLUTION_POLICY_HIGHEST_PROGRESS", new Integer(SnapshotsClient.RESOLUTION_POLICY_HIGHEST_PROGRESS));
 		GOOGLE_SNAPSHOT_RESOLUTION_POLICIES.put("RESOLUTION_POLICY_LAST_KNOWN_GOOD", new Integer(SnapshotsClient.RESOLUTION_POLICY_LAST_KNOWN_GOOD));
@@ -118,7 +120,7 @@ public class GodotAndroid extends Godot.SingletonBase {
 		activity = p_activity;
 	}
 
-	public HashMap<String, Integer> get_google_resolution_policies() {
+	public Dictionary get_google_resolution_policies() {
 		return GOOGLE_SNAPSHOT_RESOLUTION_POLICIES;
 	}
 
@@ -160,7 +162,7 @@ public class GodotAndroid extends Godot.SingletonBase {
 		return firebaseCurrentUser.get_user_details();
 	}
 
-	public void firebase_analytics_log_event(final String event_name, final HashMap<String, Object> params) {
+	public void firebase_analytics_log_event(final String event_name, final Dictionary params) {
 		firebaseCurrentAnalytics.log_event(event_name, params);
 	}
 
