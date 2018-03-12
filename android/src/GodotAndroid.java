@@ -82,7 +82,7 @@ public class GodotAndroid extends Godot.SingletonBase {
 			"google_leaderboard_submit", "google_leaderboard_show", "google_leaderboard_showlist",
 
 			// GoogleSnapshot
-			"google_snapshot_load", "google_snapshot_save",
+			"google_snapshot_load", "google_snapshot_save", "get_google_resolution_policies",
 
 			// GoogleAchievements
 			"google_achievement_unlock", "google_achievement_increment", "google_achievement_show_list",
@@ -100,7 +100,7 @@ public class GodotAndroid extends Godot.SingletonBase {
 			"firebase_initialize",
 
 			// FirebaseCurrentUser
-			"firebase_get_user_details"
+			"firebase_get_user_details",
 
 			// FirebaseCurrentAnalytics
 			"firebase_log_event", "firebase_tutorial_begin", "firebase_tutorial_complete", "firebase_purchase",
@@ -132,47 +132,47 @@ public class GodotAndroid extends Godot.SingletonBase {
 	}
 
 	public void firebase_log_event(final String event_name, final HashMap<String, Object> params) {
-		firebaseCurrentAnalytics.firebase_log_event(event_name, params);
+		firebaseCurrentAnalytics.log_event(event_name, params);
 	}
 
 	public void firebase_tutorial_begin(final String name) {
-		firebaseCurrentAnalytics.firebase_tutorial_begin(name);
+		firebaseCurrentAnalytics.tutorial_begin(name);
 	}
 
 	public void firebase_tutorial_complete(final String name) {
-		firebaseCurrentAnalytics.firebase_tutorial_complete(name);
+		firebaseCurrentAnalytics.tutorial_complete(name);
 	}
 
 	public void firebase_purchase(final String item) {
-		firebaseCurrentAnalytics.firebase_purchase(item);
+		firebaseCurrentAnalytics.purchase(item);
 	}
 
 	public void firebase_unlock_achievement(final String achievement) {
-		firebaseCurrentAnalytics.firebase_unlock_achievement(achievement);
+		firebaseCurrentAnalytics.unlock_achievement(achievement);
 	}
 
 	public void firebase_join_group(final String group) {
-		firebaseCurrentAnalytics.firebase_join_group(group);
+		firebaseCurrentAnalytics.join_group(group);
 	}
 
 	public void firebase_login() {
-		firebaseCurrentAnalytics.firebase_login();
+		firebaseCurrentAnalytics.login();
 	}
 
 	public void firebase_level_up(final String name) {
-		firebaseCurrentAnalytics.firebase_level_up(name);
+		firebaseCurrentAnalytics.level_up(name);
 	}
 
 	public void firebase_post_score(final int score) {
-		firebaseCurrentAnalytics.firebase_post_score(score);
+		firebaseCurrentAnalytics.post_score(score);
 	}
 
 	public void firebase_select_content(final String name) {
-		firebaseCurrentAnalytics.firebase_select_content(name);
+		firebaseCurrentAnalytics.select_content(name);
 	}
 
 	public void firebase_share() {
-		firebaseCurrentAnalytics.firebase_share();
+		firebaseCurrentAnalytics.share();
 	}
 
 	public void google_initialize(final int instance_id) {

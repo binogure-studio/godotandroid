@@ -7,7 +7,10 @@ import android.util.Log;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 
-import java.util.Locale;
+import java.util.Arrays;
+import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FirebaseCurrentAnalytics {
 	private static final String TAG = "FirebaseCurrentAnalytics";
@@ -17,7 +20,6 @@ public class FirebaseCurrentAnalytics {
   private static FirebaseCurrentAnalytics mInstance = null;
 
 	private FirebaseAnalytics mFirebaseAnalytics;
-  private FirebaseAuth mAuth;
 
 	public static synchronized FirebaseCurrentAnalytics getInstance (Activity p_activity) {
 		if (mInstance == null) {
@@ -30,7 +32,6 @@ public class FirebaseCurrentAnalytics {
 	public FirebaseCurrentAnalytics(Activity p_activity) {
     activity = p_activity;
 
-		mAuth = FirebaseAuth.getInstance();
 		mFirebaseAnalytics = FirebaseAnalytics.getInstance(activity);
 	}
 
@@ -45,7 +46,7 @@ public class FirebaseCurrentAnalytics {
 
 		for (Map.Entry param : params.entrySet()) {
 			Object value = param.getValue();
-			String key = param.getKey();
+			String key = (String)param.getKey();
 
 			if (value instanceof Boolean) {
 				bundle.putBoolean(key, (Boolean) value);
@@ -62,7 +63,7 @@ public class FirebaseCurrentAnalytics {
 			}
 		}
 
-		mFirebaseAnalytics.logEvent(name, bundle);
+		mFirebaseAnalytics.logEvent(eventName, bundle);
 	}
 
 	public void tutorial_begin(final String name) {

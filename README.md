@@ -14,7 +14,7 @@ Android services for Godot Engine 2.1, including:
    * User details
    * Analytics
    * Invite **WIP**
-   * Notifaction **WIP**
+   * Notification **WIP**
 
 
 # Usage
@@ -129,6 +129,7 @@ func google_connect():
 |`google_leaderboard_showlist`||`void`|Show the leaderboards' list|
 |`google_snapshot_load`|`String name, int conflictResolutionPolicy`|`void`|Load the given snapshot. `godot_android` exposes the following values for the resolution policy `RESOLUTION_POLICY_HIGHEST_PROGRESS`, `RESOLUTION_POLICY_LAST_KNOWN_GOOD`, `RESOLUTION_POLICY_LONGEST_PLAYTIME`, `RESOLUTION_POLICY_MANUAL`, `RESOLUTION_POLICY_MOST_RECENTLY_MODIFIED`|
 |`google_snapshot_save`|`String name, String data, String description, boolean force`|`void`|Save a given snapshot. Use the `force` to overwrite a conflicting savegame|
+|`get_google_resolution_policies`||`Dictionnary`|Return the google snapshot available policies|
 |`google_achievement_unlock`|`String id`|`void`|Unlock the given achievement|
 |`google_achievement_increment`|`String id, int amount`|`void`|Increment by `amount` the given achievement|
 |`google_achievement_show_list`||`void`|Show the achievement list|
