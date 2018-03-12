@@ -27,7 +27,7 @@ public class GodotAndroidCommon {
 		GODOT_CONNECTION_TRANSITIONS.put(GodotConnectStatus.CONNECTED, new GodotConnectStatus[] {GodotConnectStatus.DISCONNECTING});
 	};
 
-	public static GodotConnectStatus godotConnectionStatus = GodotConnectStatus.INITIALIZED;
+	private GodotConnectStatus godotConnectionStatus = GodotConnectStatus.INITIALIZED;
 
 	protected boolean updateConnectionStatus(GodotConnectStatus nextConnectionStatus) {
 		return updateConnectionStatus(nextConnectionStatus, false);
