@@ -13,7 +13,7 @@ Android services for Godot Engine 2.1, including:
 * Firebase
    * User details
    * Analytics
-   * Invite **WIP**
+   * Invite
    * Notification **WIP**
 
 
@@ -142,9 +142,7 @@ func google_connect():
 |`facebook_connect`||`void`|Connect to facebook|
 |`facebook_disconnect`||`void`|Disconnect from facebook|
 |`facebook_is_connected`||`boolean`|Return `true` if connected, `false` otherwise|
-|`facebook_share_link`|`String link`|`void`|Share a link via facebook|
-|`facebook_share_link_with_quote`|`String link, String quote`|`void`|Share a link via facebook|
-|`facebook_share_link_with_quote_and_hashtag`|`String link, String quote, String hashtag`|`void`|Share a link via facebook|
+|`facebook_share_link`|`String link, [String quote], [String hashtag]`|`void`|Share a link via facebook|
 
 ### Firebase
 
@@ -163,6 +161,7 @@ func google_connect():
 |`firebase_post_score`|`int score`||`void`|Log event `post_score`|
 |`firebase_select_content`|`String name`||`void`|Log event `select_content`|
 |`firebase_share`||`void`|Log event `share`|
+|`firebase_invite`|`String message, String action_text, [String custom_image_uri], [String deep_link_uri]`|`void`|Send an application invitation (**WIP** on `deepLink`)|
 
 
 ## Callbacks
@@ -205,6 +204,8 @@ func google_connect():
 
 |name|parameters|description|
 |---|---|---|
+|`firebase_invite_success`|`String id`|Called once the application invitation has been sent|
+|`firebase_invite_failed`|`String message`|Called if it failed to send the application invitation|
 
 # Log
 

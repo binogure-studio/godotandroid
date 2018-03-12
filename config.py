@@ -12,6 +12,7 @@ def configure(env):
         # Firebase dependencies
         env.android_add_dependency("compile 'com.google.firebase:firebase-core:" + gms_version + "'")
         env.android_add_dependency("compile 'com.google.firebase:firebase-auth:" + gms_version + "'")
+        env.android_add_dependency("compile 'com.google.firebase:firebase-invites:" + gms_version + "'")
 
         # Play service dependencies
         env.android_add_dependency("compile 'com.google.android.gms:play-services-auth:" + gms_version + "'")

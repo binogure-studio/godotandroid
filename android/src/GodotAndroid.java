@@ -37,6 +37,7 @@ import org.godotengine.godot.facebook.FacebookShare;
 // Import firebase
 import org.godotengine.godot.firebase.FirebaseCurrentUser;
 import org.godotengine.godot.firebase.FirebaseCurrentAnalytics;
+import org.godotengine.godot.firebase.FirebaseCurrentInvite;
 
 public class GodotAndroid extends Godot.SingletonBase {
 
@@ -53,6 +54,7 @@ public class GodotAndroid extends Godot.SingletonBase {
 
 	private FirebaseCurrentUser firebaseCurrentUser;
 	private FirebaseCurrentAnalytics firebaseCurrentAnalytics;
+	private FirebaseCurrentInvite firebaseCurrentInvite;
 
 	private static final HashMap<String, Integer> GOOGLE_SNAPSHOT_RESOLUTION_POLICIES;
 
@@ -94,7 +96,7 @@ public class GodotAndroid extends Godot.SingletonBase {
 			"facebook_connect", "facebook_disconnect", "facebook_is_connected",
 
 			// FacebookShare
-			"facebook_share_link", "facebook_share_link_with_quote", "facebook_share_link_with_quote_and_hashtag",
+			"facebook_share_link",
 
 			// Firebase
 			"firebase_initialize",
@@ -105,7 +107,10 @@ public class GodotAndroid extends Godot.SingletonBase {
 			// FirebaseCurrentAnalytics
 			"firebase_log_event", "firebase_tutorial_begin", "firebase_tutorial_complete", "firebase_purchase",
 			"firebase_unlock_achievement", "firebase_join_group", "firebase_login", "firebase_level_up", 
-			"firebase_post_score", "firebase_select_content", "firebase_share"
+			"firebase_post_score", "firebase_select_content", "firebase_share",
+
+			// FirebaseCurrentInvite
+			"firebase_invite"
 		});
 
 		activity = p_activity;
@@ -123,6 +128,25 @@ public class GodotAndroid extends Godot.SingletonBase {
 
 					firebaseCurrentAnalytics = FirebaseCurrentAnalytics.getInstance(activity);
 					firebaseCurrentAnalytics.init(instance_id);
+
+					firebaseCurrentInvite = FirebaseCurrentInvite.getInstance(activity);
+					firebaseCurrentInvite.init(instance_id);
+			}
+		});
+	}
+
+	public void firebase_invite(final String message, final String action_text, final String custom_image_uri, final String deep_link_uri) {
+		activity.runOnUiThread(new Runnable() {
+			public void run() {
+				if (custom_image_uri.length() > 0 && deep_link_uri.length() > 0 ) {
+					firebaseCurrentInvite.invite(message, action_text, custom_image_uri, deep_link_uri);
+				} else if (custom_image_uri.length() > 0) {
+					firebaseCurrentInvite.invite_with_image(message, action_text, custom_image_uri);
+				} else if (deep_link_uri.length() > 0) {
+					firebaseCurrentInvite.invite_with_deeplink(message, action_text, deep_link_uri);
+				} else {
+					firebaseCurrentInvite.invite(message, action_text);
+				}
 			}
 		});
 	}
@@ -225,26 +249,16 @@ public class GodotAndroid extends Godot.SingletonBase {
 		return facebookAuthentication.isConnected();
 	}
 
-	public void facebook_share_link(final String link) {
+  public void facebook_share_link(final String link, final String quote, final String hashtag) {
 		activity.runOnUiThread(new Runnable() {
 			public void run() {
-				facebookShare.share_link(link);
-			}
-		});
-	}
-
-	public void facebook_share_link_with_quote(final String link, final String quote) {
-		activity.runOnUiThread(new Runnable() {
-			public void run() {
-				facebookShare.share_link(link, quote);
-			}
-		});
-	}
-
-	public void facebook_share_link_with_quote_and_hashtag(final String link, final String quote, final String hashtag) {
-		activity.runOnUiThread(new Runnable() {
-			public void run() {
-				facebookShare.share_link(link, quote, hashtag);
+				if (quote.length() > 0 && hashtag.length() > 0) {
+					facebookShare.share_link(link, quote, hashtag);
+				} else if (quote.length() > 0) {
+					facebookShare.share_link(link, quote);
+				} else {
+					facebookShare.share_link(link);
+				}
 			}
 		});
 	}
