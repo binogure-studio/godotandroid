@@ -87,6 +87,8 @@ public class FacebookAuthentication extends GodotAndroidCommon {
 
   private void firebaseAuthWithFacebook(final AccessToken accessToken) {
 
+    Log.d(TAG, "Auth to firebase using facebook.");
+
     AuthCredential credential = FacebookAuthProvider.getCredential(accessToken.getToken());
     mAuth.signInWithCredential(credential)
     .addOnCompleteListener(activity, new OnCompleteListener<AuthResult>() {
@@ -97,10 +99,14 @@ public class FacebookAuthentication extends GodotAndroidCommon {
           if (updateConnectionStatus(GodotConnectStatus.CONNECTED)) {
             FirebaseUser firebaseUser = mAuth.getCurrentUser();
 
+            Log.d(TAG, "Connected to facebook.");
+
             GodotLib.calldeferred(instance_id, "facebook_auth_connected", new Object[]{ firebaseUser.getDisplayName() });
           }
         } else {
           if (updateConnectionStatus(GodotConnectStatus.DISCONNECTED)) {
+            Log.w(TAG, task.getException());
+
             GodotLib.calldeferred(instance_id, "facebook_auth_connect_failed", new Object[]{ task.getException().toString() });
           }
         }
@@ -117,11 +123,15 @@ public class FacebookAuthentication extends GodotAndroidCommon {
   public void connect() {
     if (updateConnectionStatus(GodotConnectStatus.CONNECTING)) {
       mLoginManager.logInWithPublishPermissions(activity, null);
+    } else {
+      Log.d(TAG, "Already connecting to facebook.");
     }
   }
 
 	public void disconnect() {
     if (updateConnectionStatus(GodotConnectStatus.DISCONNECTING)) {
+      Log.d(TAG, "Facebook signed out.");
+
 		  mLoginManager.logOut();
 
       // Nothing else to check here
@@ -137,12 +147,16 @@ public class FacebookAuthentication extends GodotAndroidCommon {
 
 	public void onStart() {
     if (updateConnectionStatus(GodotConnectStatus.CONNECTING)) {
+      Log.d(TAG, "Trying to connect silently");
+
       AccessToken accessToken = AccessToken.getCurrentAccessToken();
 
       if (accessToken != null && !accessToken.isExpired()) {
         firebaseAuthWithFacebook(accessToken);
       } else {
         updateConnectionStatus(GodotConnectStatus.DISCONNECTED);
+
+        Log.d(TAG, "Failed to connect silently");
       }
     }
 	}
