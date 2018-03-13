@@ -1,4 +1,4 @@
-# godot-android
+# ![logo](./logo.png) godot-android
 
 [![Platform](https://img.shields.io/badge/Platform-Android-green.svg?longCache=true&style=flat-square)](https://github.com/xsellier/godotandroid)
 [![Godot Engine](https://img.shields.io/badge/GodotEngine-2.1-orange.svg?longCache=true&style=flat-square)](https://github.com/godotengine/godot)
