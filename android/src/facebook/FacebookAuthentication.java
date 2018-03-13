@@ -30,18 +30,17 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+// Used to link credentials
+import com.google.firebase.auth.GoogleAuthProvider;
+
 import com.godot.game.R;
 
 public class FacebookAuthentication extends GodotAndroidCommon {
 
 	private static final String TAG = "FacebookAuthentication";
-
-  private static int instance_id;
-	private static Activity activity = null;
 	private static FacebookAuthentication mInstance = null;
 
-	private static CallbackManager mCallbackManager;
-	private FirebaseAuth mAuth;
+	private CallbackManager mCallbackManager;
   private LoginManager mLoginManager;
 
 	public static synchronized FacebookAuthentication getInstance (Activity p_activity) {
@@ -91,8 +90,18 @@ public class FacebookAuthentication extends GodotAndroidCommon {
     Log.d(TAG, "Auth to firebase using facebook.");
 
     AuthCredential credential = FacebookAuthProvider.getCredential(accessToken.getToken());
-    mAuth.signInWithCredential(credential)
-    .addOnCompleteListener(activity, new OnCompleteListener<AuthResult>() {
+    FirebaseUser firebaseUser = mAuth.getCurrentUser();
+    Task<AuthResult> authResultTask;
+
+    if (firebaseUser != null) {
+      // Link account
+      authResultTask = firebaseUser.linkWithCredential(credential);
+    } else {
+      // SignIn
+      authResultTask = mAuth.signInWithCredential(credential);
+    }
+    
+    authResultTask.addOnCompleteListener(activity, new OnCompleteListener<AuthResult>() {
       @Override
       public void onComplete(@NonNull Task<AuthResult> task) {
         if (task.isSuccessful()) {
@@ -135,9 +144,34 @@ public class FacebookAuthentication extends GodotAndroidCommon {
 
 		  mLoginManager.logOut();
 
-      // Nothing else to check here
-      updateConnectionStatus(GodotConnectStatus.DISCONNECTED);
-      GodotLib.calldeferred(instance_id, "facebook_auth_disconnected", new Object[]{ });
+      FirebaseUser firebaseUser = mAuth.getCurrentUser();
+
+      if (firebaseUser != null) {
+        firebaseUser.unlink(FacebookAuthProvider.PROVIDER_ID)
+        .addOnCompleteListener(activity, new OnCompleteListener<AuthResult>() {
+          @Override
+          public void onComplete(@NonNull Task<AuthResult> task) {
+            if (task.isSuccessful()) {
+              // Auth provider unlinked from account
+              updateConnectionStatus(GodotConnectStatus.DISCONNECTED);
+
+              GodotLib.calldeferred(instance_id, "facebook_auth_disconnected", new Object[]{ });
+            } else {
+              String message = task.getException().getMessage();
+
+              // If sign in fails, display a message to the user.
+              Log.w(TAG, "Failed to disconnect from firebase: " + task.getException());
+
+              updateConnectionStatus(GodotConnectStatus.CONNECTED);
+              GodotLib.calldeferred(instance_id, "facebook_auth_disconnect_failed", new Object[]{ message });
+            }
+          }
+        });
+      } else {
+        // Nothing else to check here
+        updateConnectionStatus(GodotConnectStatus.DISCONNECTED);
+        GodotLib.calldeferred(instance_id, "facebook_auth_disconnected", new Object[]{ });
+      }
     }
 	}
 

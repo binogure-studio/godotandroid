@@ -1,12 +1,22 @@
 package org.godotengine.godot;
 
+import android.app.Activity;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.EnumMap;
 import java.io.IOException;
 
+import com.google.firebase.auth.FacebookAuthProvider;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 public class GodotAndroidCommon {
+	protected int instance_id;
+	protected Activity activity = null;
+	protected FirebaseAuth mAuth;
+
   public enum GodotConnectStatus {
 		INITIALIZED,
 		DISCONNECTED,

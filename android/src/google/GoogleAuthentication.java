@@ -3,7 +3,6 @@ package org.godotengine.godot.google;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
 import android.os.AsyncTask;
@@ -54,12 +53,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 public class GoogleAuthentication extends GodotAndroidCommon {
-	private static int instance_id;
-	private static Activity activity = null;
-	private static Context context = null;
+	
 	private static GoogleAuthentication mInstance = null;
 
-	private FirebaseAuth mAuth;
 	private GoogleApiClient mGoogleApiClient;
 	private GoogleSignInAccount mAccount;
 	private Bundle mBundle;
@@ -149,8 +145,18 @@ public class GoogleAuthentication extends GodotAndroidCommon {
 
 	private void firebaseAuthWithGoogle(final GoogleSignInAccount account) {
 		AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+    FirebaseUser firebaseUser = mAuth.getCurrentUser();
+    Task<AuthResult> authResultTask;
 
-		mAuth.signInWithCredential(credential).addOnCompleteListener(activity, new OnCompleteListener<AuthResult>() {
+    if (firebaseUser != null) {
+      // Link account
+      authResultTask = firebaseUser.linkWithCredential(credential);
+    } else {
+      // SignIn
+      authResultTask = mAuth.signInWithCredential(credential);
+    }
+
+		authResultTask.addOnCompleteListener(activity, new OnCompleteListener<AuthResult>() {
 			@Override
 			public void onComplete(@NonNull Task<AuthResult> task) {
 				if (task.isSuccessful()) {
