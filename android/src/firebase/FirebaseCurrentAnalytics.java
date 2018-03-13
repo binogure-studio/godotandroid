@@ -122,9 +122,10 @@ public class FirebaseCurrentAnalytics {
 		log_event(FirebaseAnalytics.Event.LEVEL_UP, params);
 	}
 
-	public void post_score(final int score) {
+	public void post_score(final String level, final int score) {
 		Dictionary params = new Dictionary();
 
+		params.put(FirebaseAnalytics.Param.LEVEL, level);
 		params.put(FirebaseAnalytics.Param.SCORE, score);
 
 		log_event(FirebaseAnalytics.Event.POST_SCORE, params);

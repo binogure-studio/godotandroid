@@ -201,8 +201,8 @@ public class GodotAndroid extends Godot.SingletonBase {
 		firebaseCurrentAnalytics.level_up(name);
 	}
 
-	public void firebase_analytics_post_score(final int score) {
-		firebaseCurrentAnalytics.post_score(score);
+	public void firebase_analytics_post_score(final String level, final int score) {
+		firebaseCurrentAnalytics.post_score(level, score);
 	}
 
 	public void firebase_analytics_select_content(final String name) {
