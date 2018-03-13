@@ -29,11 +29,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
-// Used to link credentials
-import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.UserInfo;
 
 import com.godot.game.R;
+
+import java.util.List;
 
 public class FacebookAuthentication extends GodotAndroidCommon {
 
@@ -85,6 +85,28 @@ public class FacebookAuthentication extends GodotAndroidCommon {
     mAuth = FirebaseAuth.getInstance();
 	}
 
+  public void onConnected() {
+    if (updateConnectionStatus(GodotConnectStatus.CONNECTED)) {
+      FirebaseUser firebaseUser = mAuth.getCurrentUser();
+
+      // Already auth
+      Log.d(TAG, "Connected to facebook.");
+
+      GodotLib.calldeferred(instance_id, "facebook_auth_connected", new Object[]{ firebaseUser.getDisplayName() });
+    }
+  }
+
+  public void onConnectionFailed(String message) {
+    if (updateConnectionStatus(GodotConnectStatus.DISCONNECTED)) {
+      Log.w(TAG, message);
+
+      GodotLib.calldeferred(instance_id, "facebook_auth_connect_failed", new Object[]{ message });
+
+      // Disconnect from facebook
+      mLoginManager.logOut();
+    }
+  }
+
   private void firebaseAuthWithFacebook(final AccessToken accessToken) {
 
     Log.d(TAG, "Auth to firebase using facebook.");
@@ -94,6 +116,19 @@ public class FacebookAuthentication extends GodotAndroidCommon {
     Task<AuthResult> authResultTask;
 
     if (firebaseUser != null) {
+      for (UserInfo userInfo : firebaseUser.getProviderData()) {
+        // Already logged using facebook
+        if (userInfo.getProviderId().equals(FacebookAuthProvider.PROVIDER_ID)) {
+          if (userInfo.getUid().equals(accessToken.getUserId())) {
+            onConnected();
+          } else {
+            onConnectionFailed("Facebook users' id don't match. (" + userInfo.getUid() + " != " + accessToken.getUserId() + ")");
+          }
+
+          return;
+        }
+      }
+
       // Link account
       authResultTask = firebaseUser.linkWithCredential(credential);
     } else {
@@ -101,27 +136,21 @@ public class FacebookAuthentication extends GodotAndroidCommon {
       authResultTask = mAuth.signInWithCredential(credential);
     }
     
-    authResultTask.addOnCompleteListener(activity, new OnCompleteListener<AuthResult>() {
-      @Override
-      public void onComplete(@NonNull Task<AuthResult> task) {
-        if (task.isSuccessful()) {
-          // Prevent to be called more than once
-          if (updateConnectionStatus(GodotConnectStatus.CONNECTED)) {
-            FirebaseUser firebaseUser = mAuth.getCurrentUser();
-
-            Log.d(TAG, "Connected to facebook.");
-
-            GodotLib.calldeferred(instance_id, "facebook_auth_connected", new Object[]{ firebaseUser.getDisplayName() });
-          }
-        } else {
-          if (updateConnectionStatus(GodotConnectStatus.DISCONNECTED)) {
-            Log.w(TAG, task.getException());
-
-            GodotLib.calldeferred(instance_id, "facebook_auth_connect_failed", new Object[]{ task.getException().toString() });
+    if (authResultTask != null) {
+      authResultTask.addOnCompleteListener(activity, new OnCompleteListener<AuthResult>() {
+        @Override
+        public void onComplete(@NonNull Task<AuthResult> task) {
+          if (task.isSuccessful()) {
+            // Prevent to be called more than once
+            onConnected();
+          } else {
+            onConnectionFailed(task.getException().toString());
           }
         }
-      }
-    });
+      });
+    } else {
+      onConnected();
+    }
   }
 
 	public void init(final int p_instance_id) {
@@ -180,6 +209,22 @@ public class FacebookAuthentication extends GodotAndroidCommon {
     mCallbackManager.onActivityResult(requestCode, resultCode, data);
 	}
 
+  private void refreshToken() {
+    AccessToken.refreshCurrentAccessTokenAsync(new AccessToken.AccessTokenRefreshCallback() {
+      @Override
+      public void OnTokenRefreshed(AccessToken accessToken) {
+        firebaseAuthWithFacebook(accessToken);
+      }
+
+      @Override
+      public void OnTokenRefreshFailed(FacebookException exception) {
+        updateConnectionStatus(GodotConnectStatus.DISCONNECTED);
+
+        Log.d(TAG, "Failed to connect silently, " + exception.getMessage());
+      }
+    });
+  }
+
 	public void onStart() {
     if (updateConnectionStatus(GodotConnectStatus.CONNECTING)) {
 			AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
@@ -192,9 +237,8 @@ public class FacebookAuthentication extends GodotAndroidCommon {
           if (accessToken != null && !accessToken.isExpired()) {
             firebaseAuthWithFacebook(accessToken);
           } else {
-            updateConnectionStatus(GodotConnectStatus.DISCONNECTED);
-
-            Log.d(TAG, "Failed to connect silently");
+            // Try to refresh the facebook token
+            refreshToken();
           }
 
 					return null;
