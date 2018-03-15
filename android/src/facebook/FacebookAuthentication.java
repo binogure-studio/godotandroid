@@ -120,6 +120,8 @@ public class FacebookAuthentication extends GodotAndroidCommon {
         // Already logged using facebook
         if (userInfo.getProviderId().equals(FacebookAuthProvider.PROVIDER_ID)) {
           if (userInfo.getUid().equals(accessToken.getUserId())) {
+            Log.i(TAG, "Already logged in");
+
             onConnected();
           } else {
             onConnectionFailed("Facebook users' id don't match. (" + userInfo.getUid() + " != " + accessToken.getUserId() + ")");

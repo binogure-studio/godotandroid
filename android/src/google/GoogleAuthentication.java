@@ -51,6 +51,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.UserInfo;
 
 public class GoogleAuthentication extends GodotAndroidCommon {
 	
@@ -149,6 +150,27 @@ public class GoogleAuthentication extends GodotAndroidCommon {
     Task<AuthResult> authResultTask;
 
     if (firebaseUser != null) {
+      for (UserInfo userInfo : firebaseUser.getProviderData()) {
+        // Already logged using google
+        if (userInfo.getProviderId().equals(GoogleAuthProvider.PROVIDER_ID)) {
+          if (userInfo.getUid().equals(account.getId())) {
+						Log.i(TAG, "Already logged in");
+
+            onConnected();
+          } else {
+						String message = "Failed to connect to firebase: users' id don't match. (" + userInfo.getUid() + " != " + account.getId() + ")";
+
+						// If sign in fails, display a message to the user.
+						Log.w(TAG, message);
+						GodotLib.calldeferred(instance_id, "google_auth_connect_failed", new Object[] { message });
+
+            onDisconnected();
+          }
+
+          return;
+        }
+      }
+
       // Link account
       authResultTask = firebaseUser.linkWithCredential(credential);
     } else {
