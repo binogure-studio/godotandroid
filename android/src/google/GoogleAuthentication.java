@@ -156,6 +156,7 @@ public class GoogleAuthentication extends GodotAndroidCommon {
           if (userInfo.getUid().equals(account.getId())) {
 						Log.i(TAG, "Already logged in");
 
+						mAccount = account;
             onConnected();
           } else {
 						String message = "Failed to connect to firebase: users' id don't match. (" + userInfo.getUid() + " != " + account.getId() + ")";
@@ -182,7 +183,6 @@ public class GoogleAuthentication extends GodotAndroidCommon {
 			@Override
 			public void onComplete(@NonNull Task<AuthResult> task) {
 				if (task.isSuccessful()) {
-					// Only on connection success
 					mAccount = account;
 
 					onConnected();
