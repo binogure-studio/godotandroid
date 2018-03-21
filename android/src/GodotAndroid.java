@@ -115,6 +115,9 @@ public class GodotAndroid extends Godot.SingletonBase {
 
 			// FirebaseCurrentInvite
 			"firebase_invite"
+
+			// Share
+			"share"
 		});
 
 		activity = p_activity;
@@ -342,6 +345,20 @@ public class GodotAndroid extends Godot.SingletonBase {
 		activity.runOnUiThread(new Runnable() {
 			public void run() {
 				googleAchievements.achievement_show_list();
+			}
+		});
+	}
+
+	public void share(final String message) {
+		activity.runOnUiThread(new Runnable() {
+			public void run() {
+				Intent sendIntent = new Intent();
+
+				sendIntent.setAction(Intent.ACTION_SEND);
+				sendIntent.putExtra(Intent.EXTRA_TEXT, message);
+				sendIntent.setType("text/plain");
+
+				activity.startActivity(sendIntent);
 			}
 		});
 	}
