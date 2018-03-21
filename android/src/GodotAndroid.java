@@ -114,7 +114,7 @@ public class GodotAndroid extends Godot.SingletonBase {
 			"firebase_analytics_post_score", "firebase_analytics_select_content", "firebase_analytics_share",
 
 			// FirebaseCurrentInvite
-			"firebase_invite"
+			"firebase_invite",
 
 			// Share
 			"share"
