@@ -6,6 +6,7 @@ import android.content.Intent;
 
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.UserInfo;
 
 import org.json.JSONObject;
 import org.json.JSONException;
@@ -45,9 +46,14 @@ public class FirebaseCurrentUser {
 
     if (firebaseUser != null) {
 			try {
-				userDetails.put("name", firebaseUser.getDisplayName());
-				userDetails.put("email", firebaseUser.getEmail());
-				userDetails.put("photo_uri", firebaseUser.getPhotoUrl());
+				for (UserInfo userInfo : firebaseUser.getProviderData()) {
+					String providerId = userInfo.getProviderId();
+
+					userDetails.put(providerId + "name", userInfo.getDisplayName());
+					userDetails.put(providerId + "email", userInfo.getEmail());
+					userDetails.put(providerId + "photo_uri", userInfo.getPhotoUrl());
+					userDetails.put(providerId + "uid", userInfo.getUid());
+				}
 			} catch (JSONException e) {
 				Log.w(TAG, "Failed to get the current user: " + e);
 			}
