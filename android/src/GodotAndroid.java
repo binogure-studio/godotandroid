@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.IntentSender.SendIntentException;
+import android.net.Uri;
 import android.util.Log;
 import android.view.View;
 import android.os.Bundle;
@@ -357,15 +358,19 @@ public class GodotAndroid extends Godot.SingletonBase {
 		});
 	}
 
-	public void share(final String message) {
+	public void share(final String message, final String imageUri) {
 		activity.runOnUiThread(new Runnable() {
 			public void run() {
 				Intent sendIntent = new Intent();
 
 				sendIntent.setAction(Intent.ACTION_SEND);
 				sendIntent.putExtra(Intent.EXTRA_TEXT, message);
-				sendIntent.setType("text/plain");
 
+				if (imageUri.length() > 0) {
+					sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(imageUri));
+				}
+
+				sendIntent.setType("*/*");
 				activity.startActivity(sendIntent);
 			}
 		});
