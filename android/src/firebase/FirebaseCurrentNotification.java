@@ -45,7 +45,7 @@ public class FirebaseCurrentNotification extends FirebaseMessagingService {
       String body = notification.getBody();
       String tag = notification.getTag();
       Uri link_uri = notification.getLink();
-      String link = ""
+      String link = "";
       
       if (link_uri != null) {
         link = link_uri.toString();
