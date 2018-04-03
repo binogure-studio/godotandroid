@@ -10,14 +10,17 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.IntentSender.SendIntentException;
 import android.net.Uri;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.View;
 import android.os.Bundle;
 
+import com.godot.game.BuildConfig;
 import com.google.android.gms.games.SnapshotsClient;
 
 import org.godotengine.godot.GodotAndroidRequest;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.HashMap;
@@ -45,6 +48,7 @@ import org.godotengine.godot.firebase.FirebaseCurrentNotification;
 
 public class GodotAndroid extends Godot.SingletonBase {
 
+	private static final String TAG = "GodotAndroid";
 	private static Context context;
 	private static Activity activity;
 
@@ -120,10 +124,11 @@ public class GodotAndroid extends Godot.SingletonBase {
 			"firebase_get_fcm",
 
 			// Share
-			"share"
+			"share", "get_shared_directory"
 		});
 
 		activity = p_activity;
+		context = activity.getApplicationContext();
 
 		// Initiliaze singletons here
 		firebaseCurrentUser = FirebaseCurrentUser.getInstance(activity);
@@ -358,20 +363,34 @@ public class GodotAndroid extends Godot.SingletonBase {
 		});
 	}
 
-	public void share(final String message, final String imageUri) {
+	public String get_shared_directory() {
+		return "/shared";
+	}
+
+	public void share(final String title, final String message, final String image_filename) {
 		activity.runOnUiThread(new Runnable() {
 			public void run() {
-				Intent sendIntent = new Intent();
+				Intent shareIntent = new Intent();
 
-				sendIntent.setAction(Intent.ACTION_SEND);
-				sendIntent.putExtra(Intent.EXTRA_TEXT, message);
+				shareIntent.setAction(Intent.ACTION_SEND);
 
-				if (imageUri.length() > 0) {
-					sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(imageUri));
+				if (image_filename.length() > 0) {
+					File imagePath = new File(context.getFilesDir(), get_shared_directory());
+					File imageFile = new File(imagePath, image_filename);
+					Uri contentUri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".fileprovider", imageFile);
+
+					if (contentUri != null) {
+						shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+						shareIntent.setDataAndType(contentUri, context.getContentResolver().getType(contentUri));
+						shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
+					} else {
+						Log.w(TAG, "File not found: " + get_shared_directory() + "/" + image_filename);
+					}
 				}
 
-				sendIntent.setType("*/*");
-				activity.startActivity(sendIntent);
+				shareIntent.putExtra(Intent.EXTRA_TEXT, message);
+				shareIntent.setType("*/*");
+				activity.startActivity(Intent.createChooser(shareIntent, title));
 			}
 		});
 	}

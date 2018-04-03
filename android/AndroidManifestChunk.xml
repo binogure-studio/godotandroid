@@ -1,3 +1,14 @@
+<!-- Add prodiver to be able to share files among multiple applications-->
+<provider
+    android:name="android.support.v4.content.FileProvider"
+    android:authorities="@string/application_id_file_provider"
+    android:grantUriPermissions="true"
+    android:exported="false">
+    <meta-data
+        android:name="android.support.FILE_PROVIDER_PATHS"
+        android:resource="@xml/filepaths" />
+</provider>
+
 <!-- Used to be able to receive notificaiton while the app is open (https://firebase.google.com/docs/cloud-messaging/android/receive?authuser=4) -->
 <service android:name="org.godotengine.godot.firebase.FirebaseCurrentNotification">
   <intent-filter>
