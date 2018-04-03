@@ -9,7 +9,7 @@ import org.godotengine.godot.GodotLib;
 import org.godotengine.godot.Dictionary;
 import org.godotengine.godot.GodotAndroidRequest;
 
-
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -20,20 +20,14 @@ public class FirebaseCurrentNotification extends FirebaseMessagingService {
 	private static final String TAG = "FirebaseCurrentNotification";
 
   private static int instance_id;
-	private static Activity activity = null;
-  private static FirebaseCurrentNotification mInstance = null;
 
-	public static synchronized FirebaseCurrentNotification getInstance (Activity p_activity) {
-		if (mInstance == null) {
-			mInstance = new FirebaseCurrentNotification(p_activity);
-		}
+	public static void init(final int p_instance_id) {
+    instance_id = p_instance_id;
+  }
 
-		return mInstance;
-	}
-
-	public FirebaseCurrentNotification(Activity p_activity) {
-    activity = p_activity;
-	}
+  public static String getFirebaseCloudMessageToken() {
+    return FirebaseInstanceId.getInstance().getToken();
+  }
 
   @Override
   public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -57,30 +51,4 @@ public class FirebaseCurrentNotification extends FirebaseMessagingService {
       });
     }
   }
-
-	public void init(final int p_instance_id) {
-    this.instance_id = p_instance_id;
-
-    onStart();
-  }
-
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-    // Nothing to do
-	}
-
-	public void onStart() {
-    // Nothing to do
-	}
-
-	public void onPause() {
-		// Nothing to do
-	}
-
-	public void onResume() {
-		// Nothing to do
-	}
-
-	public void onStop() {
-		activity = null;
-	}
 }

@@ -49,10 +49,10 @@ public class FirebaseCurrentUser {
 				for (UserInfo userInfo : firebaseUser.getProviderData()) {
 					String providerId = userInfo.getProviderId();
 
-					userDetails.put(providerId + "name", userInfo.getDisplayName());
-					userDetails.put(providerId + "email", userInfo.getEmail());
-					userDetails.put(providerId + "photo_uri", userInfo.getPhotoUrl());
-					userDetails.put(providerId + "uid", userInfo.getUid());
+					userDetails.put(providerId + ":name", userInfo.getDisplayName());
+					userDetails.put(providerId + ":email", userInfo.getEmail());
+					userDetails.put(providerId + ":photo_uri", userInfo.getPhotoUrl());
+					userDetails.put(providerId + ":uid", userInfo.getUid());
 				}
 			} catch (JSONException e) {
 				Log.w(TAG, "Failed to get the current user: " + e);

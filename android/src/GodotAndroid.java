@@ -58,7 +58,6 @@ public class GodotAndroid extends Godot.SingletonBase {
 	private FirebaseCurrentUser firebaseCurrentUser;
 	private FirebaseCurrentAnalytics firebaseCurrentAnalytics;
 	private FirebaseCurrentInvite firebaseCurrentInvite;
-	private FirebaseCurrentNotification firebaseCurrentNotification;
 
 	public static final Dictionary GOOGLE_SNAPSHOT_RESOLUTION_POLICIES;
 
@@ -116,6 +115,9 @@ public class GodotAndroid extends Godot.SingletonBase {
 			// FirebaseCurrentInvite
 			"firebase_invite",
 
+			// FirebaseMessaging
+			"firebase_get_fcm",
+
 			// Share
 			"share"
 		});
@@ -126,7 +128,6 @@ public class GodotAndroid extends Godot.SingletonBase {
 		firebaseCurrentUser = FirebaseCurrentUser.getInstance(activity);
 		firebaseCurrentAnalytics = FirebaseCurrentAnalytics.getInstance(activity);
 		firebaseCurrentInvite = FirebaseCurrentInvite.getInstance(activity);
-		firebaseCurrentNotification = FirebaseCurrentNotification.getInstance(activity);
 
 		googleAchievements = GoogleAchievements.getInstance(activity);
 		googleAuthentication = GoogleAuthentication.getInstance(activity);
@@ -147,9 +148,16 @@ public class GodotAndroid extends Godot.SingletonBase {
 				firebaseCurrentUser.init(instance_id);
 				firebaseCurrentAnalytics.init(instance_id);
 				firebaseCurrentInvite.init(instance_id);
-				firebaseCurrentNotification.init(instance_id);
+
+				// Static class
+				FirebaseCurrentNotification.init(instance_id);
 			}
 		});
+	}
+
+	public String firebase_get_fcm() {
+		// Static class
+		return FirebaseCurrentNotification.getFirebaseCloudMessageToken();
 	}
 
 	public void firebase_invite(final String message, final String action_text, final String custom_image_uri, final String deep_link_uri) {
@@ -378,7 +386,6 @@ public class GodotAndroid extends Godot.SingletonBase {
 		firebaseCurrentUser.onActivityResult(requestCode, resultCode, data);
 		firebaseCurrentAnalytics.onActivityResult(requestCode, resultCode, data);
 		firebaseCurrentInvite.onActivityResult(requestCode, resultCode, data);
-		firebaseCurrentNotification.onActivityResult(requestCode, resultCode, data);
 	}
 
 	protected void onMainPause () {
@@ -396,7 +403,6 @@ public class GodotAndroid extends Godot.SingletonBase {
 		firebaseCurrentUser.onPause();
 		firebaseCurrentAnalytics.onPause();
 		firebaseCurrentInvite.onPause();
-		firebaseCurrentNotification.onPause();
 	}
 
 	protected void onMainResume () {
@@ -414,7 +420,6 @@ public class GodotAndroid extends Godot.SingletonBase {
 		firebaseCurrentUser.onResume();
 		firebaseCurrentAnalytics.onResume();
 		firebaseCurrentInvite.onResume();
-		firebaseCurrentNotification.onResume();
 	}
 
 	protected void onMainDestroy () {
@@ -432,6 +437,5 @@ public class GodotAndroid extends Godot.SingletonBase {
 		firebaseCurrentUser.onStop();
 		firebaseCurrentAnalytics.onStop();
 		firebaseCurrentInvite.onStop();
-		firebaseCurrentNotification.onStop();
 	}
 }
