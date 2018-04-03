@@ -44,7 +44,12 @@ public class FirebaseCurrentNotification extends FirebaseMessagingService {
       String title = notification.getTitle();
       String body = notification.getBody();
       String tag = notification.getTag();
-      String link = notification.getLink().toString();
+      Uri link_uri = notification.getLink();
+      String link = ""
+      
+      if (link_uri != null) {
+        link = link_uri.toString();
+      }
 
       GodotLib.calldeferred(instance_id, "firebase_notification", new Object[] {
         title, body, tag, link, payload
