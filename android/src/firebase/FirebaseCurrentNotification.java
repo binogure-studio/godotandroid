@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.net.Uri;
 
 import org.godotengine.godot.GodotLib;
 import org.godotengine.godot.Dictionary;
