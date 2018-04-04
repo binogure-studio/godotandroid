@@ -270,10 +270,12 @@ public class GodotAndroid extends Godot.SingletonBase {
 		return facebookAuthentication.isConnected();
 	}
 
-  public void facebook_share_link(final String link, final String quote, final String hashtag) {
+  public void facebook_share_link(final String link, final String quote, final String hashtag, final String imageUrl) {
 		activity.runOnUiThread(new Runnable() {
 			public void run() {
-				if (quote.length() > 0 && hashtag.length() > 0) {
+				if (quote.length() > 0 && hashtag.length() > 0 && imageUrl.length() > 0) {
+					facebookShare.share_link(link, quote, hashtag, imageUrl);
+				} else if (quote.length() > 0 && hashtag.length() > 0) {
 					facebookShare.share_link(link, quote, hashtag);
 				} else if (quote.length() > 0) {
 					facebookShare.share_link(link, quote);

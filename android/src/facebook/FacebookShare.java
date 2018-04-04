@@ -113,6 +113,23 @@ public class FacebookShare {
     }
   }
 
+  public void share_link(final String link, final String quote, final String hashtag, final String imageUrl) {
+    if (is_connected() && ShareDialog.canShow(ShareLinkContent.class)) {
+      ShareHashtag shareHashtag = new ShareHashtag.Builder()
+      .setHashtag(hashtag)
+      .build();
+
+      ShareLinkContent linkContent = new ShareLinkContent.Builder()
+      .setContentUrl(Uri.parse(link))
+      .setQuote(quote)
+      .setShareHashtag(shareHashtag)
+      .setImageUrl(Uri.parse(imageUrl))
+      .build();
+
+      mShareDialog.show(linkContent);
+    }
+  }
+
 	public void init(final int p_instance_id) {
     this.instance_id = p_instance_id;
   }
