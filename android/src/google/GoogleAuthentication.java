@@ -203,7 +203,7 @@ public class GoogleAuthentication extends GodotAndroidCommon {
 		if (requestCode == GodotAndroidRequest.GOOGLE_AUTHENTICATION_REQUEST) {
 			GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
 
-			if (result.isSuccess()) {
+			if (result != null && result.isSuccess()) {
         GoogleSignInAccount account = result.getSignInAccount();
 
 				firebaseAuthWithGoogle(account);
