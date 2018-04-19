@@ -71,10 +71,14 @@ public class FirebaseCurrentAuthentication extends GodotAndroidCommon {
 						updateConnectionStatus(GodotConnectStatus.CONNECTED);
 
 						Log.d(TAG, "Connected to firebase");
+
+						GodotLib.calldeferred(instance_id, "firebase_auth_connected", new Object[]{ });
 					} else {
 						updateConnectionStatus(GodotConnectStatus.DISCONNECTED);
 
 						Log.w(TAG, "Failed to connect to firebase", task.getException());
+
+						GodotLib.calldeferred(instance_id, "firebase_auth_connect_failed", new Object[]{ task.getException().getMessage() });
 					}
 				}
 			});
