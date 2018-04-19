@@ -157,6 +157,7 @@ public class GodotAndroid extends Godot.SingletonBase {
 				firebaseCurrentUser.init(instance_id);
 				firebaseCurrentAnalytics.init(instance_id);
 				firebaseCurrentInvite.init(instance_id);
+				firebaseCurrentAuthentication.init(instance_id);
 
 				// Static class
 				FirebaseCurrentNotification.init(instance_id);
