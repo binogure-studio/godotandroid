@@ -127,23 +127,49 @@ public class GoogleAuthentication extends GodotAndroidCommon {
     return mAccount;
   }
 
+	private void disconnect_from_google() {
+		// Google sign out
+		if (mGoogleApiClient.isConnected()) {
+			Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(new ResultCallback<Status>() {
+				@Override
+				public void onResult(@NonNull Status status) {
+					onDisconnected();
+				}
+			});
+		} else {
+			onDisconnected();
+		}
+	}
+
 	public void disconnect() {
 		// try to disconnect only once at a time
 		if (updateConnectionStatus(GodotConnectStatus.DISCONNECTING)) {
-			// Firebase sign out
-			mAuth.signOut();
+			FirebaseUser firebaseUser = mAuth.getCurrentUser();
 
-			// Google sign out
-			if (mGoogleApiClient.isConnected()) {
-				Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(new ResultCallback<Status>() {
-					@Override
-					public void onResult(@NonNull Status status) {
-						onDisconnected();
-					}
-				});
-			} else {
-				onDisconnected();
-			}
+			// We don't want to logout from firebase, we ant to logout from google.
+      if (firebaseUser != null) {
+        firebaseUser.unlink(GoogleAuthProvider.PROVIDER_ID)
+        .addOnCompleteListener(activity, new OnCompleteListener<AuthResult>() {
+          @Override
+          public void onComplete(@NonNull Task<AuthResult> task) {
+            if (task.isSuccessful()) {
+              // Auth provider unlinked from account
+							disconnect_from_google();
+            } else {
+              String message = task.getException().getMessage();
+
+              // If sign in fails, display a message to the user.
+              Log.w(TAG, "Failed to disconnect from firebase: " + task.getException());
+
+              updateConnectionStatus(GodotConnectStatus.CONNECTED);
+              GodotLib.calldeferred(instance_id, "google_auth_disconnect_failed", new Object[]{ message });
+            }
+          }
+        });
+      } else {
+        // Nothing else to check here
+        disconnect_from_google();
+      }
 		}
 	}
 

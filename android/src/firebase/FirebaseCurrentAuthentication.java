@@ -53,7 +53,7 @@ public class FirebaseCurrentAuthentication extends GodotAndroidCommon {
 		onStart();
 	}
 
-	private void signInAnonymously() {
+	public void connect() {
 		FirebaseUser firebaseUser = mAuth.getCurrentUser();
 
 		if (firebaseUser != null) {
@@ -86,7 +86,7 @@ public class FirebaseCurrentAuthentication extends GodotAndroidCommon {
 	}
 
 	public void onStart() {
-    signInAnonymously();
+    // Nothing to do
 	}
 
 	public void onPause() {

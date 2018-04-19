@@ -125,6 +125,9 @@ public class GodotAndroid extends Godot.SingletonBase {
 			// FirebaseMessaging
 			"firebase_get_fcm",
 
+			// FirebaseCurrentAuthentication
+			"firebase_connect",
+
 			// Share
 			"share", "get_shared_directory"
 		});
@@ -182,6 +185,14 @@ public class GodotAndroid extends Godot.SingletonBase {
 				} else {
 					firebaseCurrentInvite.invite(message, action_text);
 				}
+			}
+		});
+	}
+
+	public void firebase_connect() {
+		activity.runOnUiThread(new Runnable() {
+			public void run() {
+				firebaseCurrentAuthentication.connect();
 			}
 		});
 	}
