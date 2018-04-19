@@ -140,6 +140,8 @@ public class GoogleAuthentication extends GodotAndroidCommon {
 						onDisconnected();
 					}
 				});
+			} else {
+				onDisconnected();
 			}
 		}
 	}
