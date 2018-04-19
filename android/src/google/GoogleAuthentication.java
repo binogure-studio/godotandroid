@@ -19,6 +19,7 @@ import org.godotengine.godot.GodotAndroidCommon;
 import org.godotengine.godot.GodotAndroidRequest;
 
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -167,7 +168,7 @@ public class GoogleAuthentication extends GodotAndroidCommon {
 						Log.w(TAG, message);
 						GodotLib.calldeferred(instance_id, "google_auth_connect_failed", new Object[] { message });
 
-            onDisconnected();
+            updateConnectionStatus(GodotConnectStatus.DISCONNECTED);
           }
 
           return;
@@ -195,7 +196,7 @@ public class GoogleAuthentication extends GodotAndroidCommon {
 					Log.w(TAG, "Failed to connect to firebase: " + task.getException());
 					GodotLib.calldeferred(instance_id, "google_auth_connect_failed", new Object[] { message });
 
-					onDisconnected();
+					updateConnectionStatus(GodotConnectStatus.DISCONNECTED);
 				}
 			}
 		});
@@ -204,25 +205,25 @@ public class GoogleAuthentication extends GodotAndroidCommon {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == GodotAndroidRequest.GOOGLE_AUTHENTICATION_REQUEST) {
 			GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-
-			if (result != null && result.isSuccess()) {
-        GoogleSignInAccount account = result.getSignInAccount();
-
-				firebaseAuthWithGoogle(account);
-			} else {
-				onDisconnected();
-
-				Log.w(TAG, "Failed to connect: " + result.getStatus());
-        GodotLib.calldeferred(instance_id, "google_auth_connect_failed", new Object[] { result.getStatus().getStatusMessage() });
-			}
+			
+			silentConnectHandler(result);
 		}
 	}
 
-	private void silentConnectHandler(GoogleSignInResult googleSignInResult) {
-		if (updateConnectionStatus(GodotConnectStatus.DISCONNECTED)) {
-			mGoogleApiClient.disconnect();
+	private void silentConnectHandler(GoogleSignInResult result) {
+		if (result != null && result.isSuccess()) {
+			GoogleSignInAccount account = result.getSignInAccount();
 
-			connect();
+			firebaseAuthWithGoogle(account);
+		} else if (result.getStatus().getStatusCode() == GoogleSignInStatusCodes.SIGN_IN_CANCELLED) {
+			Log.i(TAG, "Failed to connect: " + result.getStatus());
+
+			onDisconnected();
+		} else {
+			updateConnectionStatus(GodotConnectStatus.DISCONNECTED);
+
+			Log.w(TAG, "Failed to connect: " + result.getStatus());
+			GodotLib.calldeferred(instance_id, "google_auth_connect_failed", new Object[] { result.getStatus().getStatusMessage() });
 		}
 	}
 

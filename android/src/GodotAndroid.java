@@ -45,6 +45,7 @@ import org.godotengine.godot.firebase.FirebaseCurrentUser;
 import org.godotengine.godot.firebase.FirebaseCurrentAnalytics;
 import org.godotengine.godot.firebase.FirebaseCurrentInvite;
 import org.godotengine.godot.firebase.FirebaseCurrentNotification;
+import org.godotengine.godot.firebase.FirebaseCurrentAuthentication;
 
 public class GodotAndroid extends Godot.SingletonBase {
 
@@ -63,6 +64,7 @@ public class GodotAndroid extends Godot.SingletonBase {
 	private FirebaseCurrentUser firebaseCurrentUser;
 	private FirebaseCurrentAnalytics firebaseCurrentAnalytics;
 	private FirebaseCurrentInvite firebaseCurrentInvite;
+	private FirebaseCurrentAuthentication firebaseCurrentAuthentication;
 
 	public static final Dictionary GOOGLE_SNAPSHOT_RESOLUTION_POLICIES;
 
@@ -134,6 +136,7 @@ public class GodotAndroid extends Godot.SingletonBase {
 		firebaseCurrentUser = FirebaseCurrentUser.getInstance(activity);
 		firebaseCurrentAnalytics = FirebaseCurrentAnalytics.getInstance(activity);
 		firebaseCurrentInvite = FirebaseCurrentInvite.getInstance(activity);
+		firebaseCurrentAuthentication = FirebaseCurrentAuthentication.getInstance(activity);
 
 		googleAchievements = GoogleAchievements.getInstance(activity);
 		googleAuthentication = GoogleAuthentication.getInstance(activity);
@@ -412,6 +415,7 @@ public class GodotAndroid extends Godot.SingletonBase {
 		firebaseCurrentUser.onActivityResult(requestCode, resultCode, data);
 		firebaseCurrentAnalytics.onActivityResult(requestCode, resultCode, data);
 		firebaseCurrentInvite.onActivityResult(requestCode, resultCode, data);
+		firebaseCurrentAuthentication.onActivityResult(requestCode, resultCode, data);
 	}
 
 	protected void onMainPause () {
@@ -429,6 +433,7 @@ public class GodotAndroid extends Godot.SingletonBase {
 		firebaseCurrentUser.onPause();
 		firebaseCurrentAnalytics.onPause();
 		firebaseCurrentInvite.onPause();
+		firebaseCurrentAuthentication.onPause();
 	}
 
 	protected void onMainResume () {
@@ -446,6 +451,7 @@ public class GodotAndroid extends Godot.SingletonBase {
 		firebaseCurrentUser.onResume();
 		firebaseCurrentAnalytics.onResume();
 		firebaseCurrentInvite.onResume();
+		firebaseCurrentAuthentication.onResume();
 	}
 
 	protected void onMainDestroy () {
@@ -463,5 +469,6 @@ public class GodotAndroid extends Godot.SingletonBase {
 		firebaseCurrentUser.onStop();
 		firebaseCurrentAnalytics.onStop();
 		firebaseCurrentInvite.onStop();
+		firebaseCurrentAuthentication.onStop();
 	}
 }
