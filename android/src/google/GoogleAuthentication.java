@@ -92,6 +92,8 @@ public class GoogleAuthentication extends GodotAndroidCommon {
 		.addApi(Games.API)
 		.addScope(Games.SCOPE_GAMES)
 		.addApi(Auth.GOOGLE_SIGN_IN_API, options)
+		.setGravityForPopups(Gravity.TOP | Gravity.CENTER_HORIZONTAL)
+		.setViewForPopups(activity.findViewById(android.R.id.content))
 		.build();
 
 		mAuth = FirebaseAuth.getInstance();
