@@ -9,11 +9,15 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+
+import android.view.ViewGroup;
 
 import org.json.JSONObject;
 import org.json.JSONException;
 
+import org.godotengine.godot.Godot;
 import org.godotengine.godot.GodotLib;
 import org.godotengine.godot.GodotAndroidCommon;
 import org.godotengine.godot.GodotAndroidRequest;
@@ -30,6 +34,7 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.games.Games;
+import com.google.android.gms.games.GamesClient;
 import com.google.android.gms.games.Player;
 import com.google.android.gms.games.PlayersClient;
 import com.google.android.gms.tasks.Continuation;
@@ -57,9 +62,10 @@ import com.google.firebase.auth.UserInfo;
 public class GoogleAuthentication extends GodotAndroidCommon {
 	
 	private static GoogleAuthentication mInstance = null;
-
+	private Boolean initialized = false;
 	private GoogleApiClient mGoogleApiClient;
 	private GoogleSignInAccount mAccount;
+	private GamesClient gamesClient;
 	private Bundle mBundle;
 
 	private static final String TAG = "GoogleAuthentication";
@@ -212,8 +218,9 @@ public class GoogleAuthentication extends GodotAndroidCommon {
 			@Override
 			public void onComplete(@NonNull Task<AuthResult> task) {
 				if (task.isSuccessful()) {
-					mAccount = account;
+					Log.i(TAG, "Logged in");
 
+					mAccount = account;
 					onConnected();
 				} else {
 					String message = task.getException().getMessage();
@@ -242,7 +249,7 @@ public class GoogleAuthentication extends GodotAndroidCommon {
 
 			firebaseAuthWithGoogle(account);
 		} else if (result.getStatus().getStatusCode() == GoogleSignInStatusCodes.SIGN_IN_CANCELLED) {
-			Log.i(TAG, "Failed to connect: " + result.getStatus());
+			Log.i(TAG, "Failed to connect, user cancelled: " + result.getStatus());
 
 			onDisconnected();
 		} else {

@@ -11,6 +11,7 @@ import android.view.View;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import com.google.android.gms.tasks.Tasks;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,12 +25,14 @@ import org.godotengine.godot.GodotAndroidRequest;
 
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.games.AchievementsClient;
+import com.google.android.gms.games.achievement.Achievements;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.Task;
@@ -89,7 +92,7 @@ public class GoogleAchievements {
 		return googleAuthentication.isConnected();
 	}
 
-	protected AchievementsClient get_achivement_client() {
+	protected AchievementsClient get_achievement_client() {
 		GoogleAuthentication googleAuthentication = GoogleAuthentication.getInstance(activity);
 
 		return Games.getAchievementsClient(activity, googleAuthentication.get_account());
@@ -97,10 +100,9 @@ public class GoogleAchievements {
 
 	public void achievement_unlock(final String achievement_id) {
 		if (is_connected()) {
-			AchievementsClient achievementsClient = get_achivement_client();
+			AchievementsClient achievementsClient = get_achievement_client();
 
 			achievementsClient.unlock(achievement_id);
-
 			GodotLib.calldeferred(instance_id, "google_achievement_unlocked", new Object[] { achievement_id });
 		} else {
 			String message = "PlayGameServices: Google not connected";
@@ -113,7 +115,7 @@ public class GoogleAchievements {
 
 	public void achievement_increment(final String achievement_id, final int amount) {
 		if (is_connected()) {
-			AchievementsClient achievementsClient = get_achivement_client();
+			AchievementsClient achievementsClient = get_achievement_client();
 
 			achievementsClient.increment(achievement_id, amount);
 
@@ -127,7 +129,7 @@ public class GoogleAchievements {
 
 	public void achievement_show_list() {
 		if (is_connected()) {
-			AchievementsClient achievementsClient = get_achivement_client();
+			AchievementsClient achievementsClient = get_achievement_client();
 
 			achievementsClient.getAchievementsIntent()
 			.addOnSuccessListener(new OnSuccessListener<Intent>() {

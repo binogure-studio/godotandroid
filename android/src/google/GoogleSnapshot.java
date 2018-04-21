@@ -119,34 +119,28 @@ public class GoogleSnapshot {
 						SnapshotsClient.DataOrConflict<Snapshot> result = task.getResult();
 
 						if (result.isConflict()) {
-							GodotLib.calldeferred(instance_id, "google_snapshot_load_failed", new Object[] { "Cannot solve all conflicts." });
-
-							return null;
+							throw new Exception("Cannot solve all conflicts.");
 						}
 
 						// Opening the snapshot was a success without any conflict.
-						try {
-							Snapshot snapshot = result.getData();
+						Snapshot snapshot = result.getData();
 
-							// Extract the raw data from the snapshot.
-							return new String(snapshot.getSnapshotContents().readFully());
-						} catch (IOException e) {
-							String message = e.getMessage();
-
-							Log.e(TAG, "Error while reading Snapshot: " + message);
-
-							GodotLib.calldeferred(instance_id, "google_snapshot_load_failed", new Object[] { message });
-						}
-
-						return null;
+						// Extract the raw data from the snapshot.
+						return new String(snapshot.getSnapshotContents().readFully());
 					}
 				})
 				.addOnCompleteListener(new OnCompleteListener<String>() {
 					@Override
 					public void onComplete(@NonNull Task<String> task) {
-						String result = task.getResult();
+						if (task.isSuccessful()) {
+							String result = task.getResult();
 
-						GodotLib.calldeferred(instance_id, "google_snapshot_loaded", new Object[] { result });
+							GodotLib.calldeferred(instance_id, "google_snapshot_loaded", new Object[] { result });
+						} else {
+							Log.e(TAG, "Error while loading Snapshot: " + task.getException());
+
+							GodotLib.calldeferred(instance_id, "google_snapshot_load_failed", new Object[]{ task.getException().getMessage() });
+						}
 					}
 			});
 
