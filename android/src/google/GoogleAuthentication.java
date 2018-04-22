@@ -107,6 +107,9 @@ public class GoogleAuthentication extends GodotAndroidCommon {
 
 			GodotLib.calldeferred(instance_id, "google_auth_connected", new Object[]{ firebaseUser.getDisplayName() });
 
+			// Setup the popup for the achivements
+			Games.getGamesClient(activity, mAccount).setViewForPopups(activity.getWindow().getDecorView().findViewById(android.R.id.content));
+
 			GooglePlayer googlePlayer = GooglePlayer.getInstance(activity);
 
 			// It is an async task
