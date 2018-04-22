@@ -21,6 +21,7 @@ import org.godotengine.godot.Godot;
 import org.godotengine.godot.GodotLib;
 import org.godotengine.godot.GodotAndroidCommon;
 import org.godotengine.godot.GodotAndroidRequest;
+import org.godotengine.godot.google.GooglePlayer;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes;
@@ -93,7 +94,7 @@ public class GoogleAuthentication extends GodotAndroidCommon {
 		.addScope(Games.SCOPE_GAMES)
 		.addApi(Auth.GOOGLE_SIGN_IN_API, options)
 		.setGravityForPopups(Gravity.TOP | Gravity.CENTER_HORIZONTAL)
-		.setViewForPopups(activity.findViewById(android.R.id.content))
+		.setViewForPopups(activity.getWindow().getDecorView().findViewById(android.R.id.content))
 		.build();
 
 		mAuth = FirebaseAuth.getInstance();
@@ -105,6 +106,11 @@ public class GoogleAuthentication extends GodotAndroidCommon {
 			FirebaseUser firebaseUser = mAuth.getCurrentUser();
 
 			GodotLib.calldeferred(instance_id, "google_auth_connected", new Object[]{ firebaseUser.getDisplayName() });
+
+			GooglePlayer googlePlayer = GooglePlayer.getInstance(activity);
+
+			// It is an async task
+			googlePlayer.load_current_player();
 		}
 	}
 

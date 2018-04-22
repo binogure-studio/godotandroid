@@ -33,6 +33,7 @@ import org.godotengine.godot.Dictionary;
 // Import google play service
 import org.godotengine.godot.google.GoogleAchievements;
 import org.godotengine.godot.google.GoogleAuthentication;
+import org.godotengine.godot.google.GooglePlayer;
 import org.godotengine.godot.google.GoogleLeaderboard;
 import org.godotengine.godot.google.GoogleSnapshot;
 
@@ -55,6 +56,7 @@ public class GodotAndroid extends Godot.SingletonBase {
 
 	private GoogleAchievements googleAchievements;
 	private GoogleAuthentication googleAuthentication;
+	private GooglePlayer googlePlayer;
 	private GoogleLeaderboard googleLeaderboard;
 	private GoogleSnapshot googleSnapshot;
 
@@ -143,6 +145,7 @@ public class GodotAndroid extends Godot.SingletonBase {
 
 		googleAchievements = GoogleAchievements.getInstance(activity);
 		googleAuthentication = GoogleAuthentication.getInstance(activity);
+		googlePlayer = GooglePlayer.getInstance(activity);
 		googleLeaderboard = GoogleLeaderboard.getInstance(activity);
 		googleSnapshot = GoogleSnapshot.getInstance(activity);
 
@@ -250,6 +253,7 @@ public class GodotAndroid extends Godot.SingletonBase {
 			public void run() {
 				googleAchievements.init(instance_id);
 				googleAuthentication.init(instance_id);
+				googlePlayer.init(instance_id);
 				googleLeaderboard.init(instance_id);
 				googleSnapshot.init(instance_id);
 			}
@@ -415,6 +419,7 @@ public class GodotAndroid extends Godot.SingletonBase {
 	protected void onMainActivityResult (int requestCode, int resultCode, Intent data) {
 		// Trigger google's services
 		googleAchievements.onActivityResult(requestCode, resultCode, data);
+		googlePlayer.onActivityResult(requestCode, resultCode, data);
 		googleAuthentication.onActivityResult(requestCode, resultCode, data);
 		googleLeaderboard.onActivityResult(requestCode, resultCode, data);
 		googleSnapshot.onActivityResult(requestCode, resultCode, data);
@@ -433,6 +438,7 @@ public class GodotAndroid extends Godot.SingletonBase {
 	protected void onMainPause () {
 		// Trigger google's services
 		googleAchievements.onPause();
+		googlePlayer.onPause();
 		googleAuthentication.onPause();
 		googleLeaderboard.onPause();
 		googleSnapshot.onPause();
@@ -451,6 +457,7 @@ public class GodotAndroid extends Godot.SingletonBase {
 	protected void onMainResume () {
 		// Trigger google's services
 		googleAchievements.onResume();
+		googlePlayer.onResume();
 		googleAuthentication.onResume();
 		googleLeaderboard.onResume();
 		googleSnapshot.onResume();
@@ -469,6 +476,7 @@ public class GodotAndroid extends Godot.SingletonBase {
 	protected void onMainDestroy () {
 		// Trigger google's services
 		googleAchievements.onStop();
+		googlePlayer.onStop();
 		googleAuthentication.onStop();
 		googleLeaderboard.onStop();
 		googleSnapshot.onStop();

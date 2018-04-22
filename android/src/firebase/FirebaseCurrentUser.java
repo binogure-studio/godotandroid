@@ -8,6 +8,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.UserInfo;
 
+import org.godotengine.godot.google.GooglePlayer;
+
 import org.json.JSONObject;
 import org.json.JSONException;
 
@@ -41,7 +43,8 @@ public class FirebaseCurrentUser {
   }
 
   public String get_user_details() {
-    JSONObject userDetails = new JSONObject();
+		GooglePlayer googlePlayer = GooglePlayer.getInstance(activity);
+    JSONObject userDetails = googlePlayer.get_user_details();
     FirebaseUser firebaseUser = mAuth.getCurrentUser();
 
     if (firebaseUser != null) {
