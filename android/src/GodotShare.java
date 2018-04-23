@@ -88,17 +88,8 @@ public class GodotShare {
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == GodotAndroidRequest.GODOT_SHARE_REQUEST) {
-			if (resultCode == activity.RESULT_OK) {
-				Log.e(TAG, "Share succeeded");
-
-				GodotLib.calldeferred(instance_id, "godot_share_success", new Object[] { });
-			} else {
-				String message = "Failed to share: " + resultCode;
-
-				Log.e(TAG, message);
-
-				GodotLib.calldeferred(instance_id, "godot_share_failed", new Object[] { message });
-			}
+			// We cannot say if the user has shared a message or anything thanks to android :-/
+			GodotLib.calldeferred(instance_id, "godot_share_success", new Object[] { });
 		}
 	}
 
