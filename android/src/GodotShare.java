@@ -64,6 +64,7 @@ public class GodotShare {
 
 	public void share(final String title, final String message, final String image_filename) {
 		Intent shareIntent = new Intent();
+		String type = "text/plain";
 
 		shareIntent.setAction(Intent.ACTION_SEND);
 
@@ -76,13 +77,16 @@ public class GodotShare {
 				shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 				shareIntent.setDataAndType(contentUri, context.getContentResolver().getType(contentUri));
 				shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
+
+				type = "*/*";
 			} else {
 				Log.w(TAG, "File not found: " + get_shared_directory() + "/" + image_filename);
 			}
 		}
 
 		shareIntent.putExtra(Intent.EXTRA_TEXT, message);
-		shareIntent.setType("*/*");
+		shareIntent.setType(type);
+
 		activity.startActivityForResult(Intent.createChooser(shareIntent, title), GodotAndroidRequest.GODOT_SHARE_REQUEST);
 	}
 
