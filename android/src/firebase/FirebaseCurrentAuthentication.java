@@ -86,11 +86,11 @@ public class FirebaseCurrentAuthentication extends GodotAndroidCommon {
 	}
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-    // Nothing to do
+		// Nothing to do
 	}
 
 	public void onStart() {
-    // Nothing to do
+		// Nothing to do
 	}
 
 	public void onPause() {

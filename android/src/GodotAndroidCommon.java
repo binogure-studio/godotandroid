@@ -17,7 +17,7 @@ public class GodotAndroidCommon {
 	protected Activity activity = null;
 	protected FirebaseAuth mAuth;
 
-  public enum GodotConnectStatus {
+	public enum GodotConnectStatus {
 		INITIALIZED,
 		DISCONNECTED,
 		DISCONNECTING,

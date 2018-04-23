@@ -60,7 +60,7 @@ public class GoogleSnapshot {
 
 	public GoogleSnapshot(Activity p_activity) {
 		activity = p_activity;
-  }
+	}
 
 	public void init(final int p_instance_id) {
 		this.instance_id = p_instance_id;
@@ -155,7 +155,7 @@ public class GoogleSnapshot {
 	private Task<Snapshot> force_resolve_conflicts(SnapshotsClient.DataOrConflict<Snapshot> result,	final int retryCount) {
 		// Inspired by
 		// https://developers.google.com/games/services/android/savedgames
-    if (!result.isConflict()) {
+		if (!result.isConflict()) {
 			// There was no conflict, so return the result of the source.
 			TaskCompletionSource<Snapshot> source = new TaskCompletionSource<>();
 			source.setResult(result.getData());
@@ -163,8 +163,8 @@ public class GoogleSnapshot {
 			return source.getTask();
 		}
 
-    // There was a conflict. Overriding all of those.
-    SnapshotsClient.SnapshotConflict conflict = result.getConflict();
+		// There was a conflict. Overriding all of those.
+		SnapshotsClient.SnapshotConflict conflict = result.getConflict();
 		SnapshotsClient snapshotsClient = get_snapshot_client();
 
 		return snapshotsClient.resolveConflict(conflict.getConflictId(), conflict.getConflictingSnapshot())
@@ -244,18 +244,18 @@ public class GoogleSnapshot {
 					
 								// Handle success and failure for the commit and close.
 								snapshotsClient.commitAndClose(snapshot, metadataChange).addOnCompleteListener(new OnCompleteListener<SnapshotMetadata>() {
-                  @Override
-                  public void onComplete(@NonNull Task<SnapshotMetadata> task) {
-                    if (task.isSuccessful()) {
-                      GodotLib.calldeferred(instance_id, "google_snapshot_saved", new Object[] { });
-                    } else {
+									@Override
+									public void onComplete(@NonNull Task<SnapshotMetadata> task) {
+										if (task.isSuccessful()) {
+											GodotLib.calldeferred(instance_id, "google_snapshot_saved", new Object[] { });
+										} else {
 											String message = "Cannot save snapshot: " + task.getException();
 
 											Log.w(TAG, task.getException());
 							
 											GodotLib.calldeferred(instance_id, "google_snapshot_save_failed", new Object[] { message });
-                    }
-                  }
+										}
+									}
 								});
 
 								return null;
@@ -271,6 +271,6 @@ public class GoogleSnapshot {
 			String message = "PlayGameServices: Google not connected";
 
 			GodotLib.calldeferred(instance_id, "google_snapshot_save_failed", new Object[] { message });
-    }
+		}
 	}
 }

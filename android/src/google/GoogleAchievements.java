@@ -60,7 +60,7 @@ public class GoogleAchievements {
 
 	public GoogleAchievements(Activity p_activity) {
 		activity = p_activity;
-  }
+	}
 
 	public void init(final int p_instance_id) {
 		this.instance_id = p_instance_id;
@@ -107,10 +107,10 @@ public class GoogleAchievements {
 		} else {
 			String message = "PlayGameServices: Google not connected";
 
-      Log.i(TAG, "PlayGameServices: Google not connected");
+			Log.i(TAG, "PlayGameServices: Google not connected");
 
 			GodotLib.calldeferred(instance_id, "google_achievement_unlock_failed", new Object[] { message });
-    }
+		}
 	}
 
 	public void achievement_increment(final String achievement_id, final int amount) {
@@ -124,7 +124,7 @@ public class GoogleAchievements {
 			String message = "PlayGameServices: Google not connected";
 
 			GodotLib.calldeferred(instance_id, "google_achievement_increment_failed", new Object[] { message });
-    }
+		}
 	}
 
 	public void achievement_show_list() {
@@ -146,7 +146,7 @@ public class GoogleAchievements {
 			});
 
 		} else {
-      Log.i(TAG, "PlayGameServices: Google not connected");
-    }
+			Log.i(TAG, "PlayGameServices: Google not connected");
+		}
 	}
 }

@@ -127,7 +127,7 @@ public class GooglePlayer {
 						if (task.isSuccessful()) {
 							currentPlayer = task.getResult();
 
-              copy_user_picture(currentPlayer.getIconImageUri());
+							copy_user_picture(currentPlayer.getIconImageUri());
 						} else {
 							Log.e(TAG, "Failed to load player's informations: " + task.getException());
 						}
@@ -160,8 +160,8 @@ public class GooglePlayer {
 						Log.w(TAG, "Failed to copy the user's profile image: " + e);
 					}
 				} else {
-          Log.w(TAG, "Drawable not found ...");
-        }
+					Log.w(TAG, "Drawable not found ...");
+				}
 			}
 		}, sourceUri);
 	}

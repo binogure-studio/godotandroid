@@ -17,9 +17,9 @@ import java.util.Map;
 public class FirebaseCurrentAnalytics {
 	private static final String TAG = "FirebaseCurrentAnalytics";
 
-  private static int instance_id;
+	private static int instance_id;
 	private static Activity activity = null;
-  private static FirebaseCurrentAnalytics mInstance = null;
+	private static FirebaseCurrentAnalytics mInstance = null;
 
 	private FirebaseAnalytics mFirebaseAnalytics;
 
@@ -32,16 +32,16 @@ public class FirebaseCurrentAnalytics {
 	}
 
 	public FirebaseCurrentAnalytics(Activity p_activity) {
-    activity = p_activity;
+		activity = p_activity;
 
 		mFirebaseAnalytics = FirebaseAnalytics.getInstance(activity);
 	}
 
 	public void init(final int p_instance_id) {
-    this.instance_id = p_instance_id;
+		this.instance_id = p_instance_id;
 
-    onStart();
-  }
+		onStart();
+	}
 
 	public void log_event(final String eventName, final Dictionary params) {
 		Bundle bundle = new Bundle();
@@ -146,11 +146,11 @@ public class FirebaseCurrentAnalytics {
 	}
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-    // Nothing to do
+		// Nothing to do
 	}
 
 	public void onStart() {
-    // Nothing to do
+		// Nothing to do
 	}
 
 	public void onPause() {

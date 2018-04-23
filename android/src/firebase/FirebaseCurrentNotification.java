@@ -20,36 +20,36 @@ import java.util.Map;
 public class FirebaseCurrentNotification extends FirebaseMessagingService {
 	private static final String TAG = "FirebaseCurrentNotification";
 
-  private static int instance_id;
+	private static int instance_id;
 
 	public static void init(final int p_instance_id) {
-    instance_id = p_instance_id;
-  }
+		instance_id = p_instance_id;
+	}
 
-  public static String getFirebaseCloudMessageToken() {
-    return FirebaseInstanceId.getInstance().getToken();
-  }
+	public static String getFirebaseCloudMessageToken() {
+		return FirebaseInstanceId.getInstance().getToken();
+	}
 
-  @Override
-  public void onMessageReceived(RemoteMessage remoteMessage) {
-    RemoteMessage.Notification notification = remoteMessage.getNotification();
+	@Override
+	public void onMessageReceived(RemoteMessage remoteMessage) {
+		RemoteMessage.Notification notification = remoteMessage.getNotification();
 
-    // Check if message contains a notification payload.
-    if (notification != null) {
-      // Convert payload to Dictionary
-      Map<String, String> payloadMap = remoteMessage.getData();
-      Dictionary payload = new Dictionary();
+		// Check if message contains a notification payload.
+		if (notification != null) {
+			// Convert payload to Dictionary
+			Map<String, String> payloadMap = remoteMessage.getData();
+			Dictionary payload = new Dictionary();
 
-      payload.putAll(payloadMap);
+			payload.putAll(payloadMap);
 
-      String title = notification.getTitle();
-      String body = notification.getBody();
+			String title = notification.getTitle();
+			String body = notification.getBody();
 
-      Log.d(TAG, "Receiving a notification title: " + title + ", body: " + body + ", payload: " + payload);
+			Log.d(TAG, "Receiving a notification title: " + title + ", body: " + body + ", payload: " + payload);
 
-      GodotLib.calldeferred(instance_id, "firebase_notification", new Object[] {
-        title, body, payload
-      });
-    }
-  }
+			GodotLib.calldeferred(instance_id, "firebase_notification", new Object[] {
+				title, body, payload
+			});
+		}
+	}
 }

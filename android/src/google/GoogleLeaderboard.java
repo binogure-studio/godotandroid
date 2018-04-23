@@ -58,7 +58,7 @@ public class GoogleLeaderboard {
 
 	public GoogleLeaderboard(Activity p_activity) {
 		activity = p_activity;
-  }
+	}
 
 	public void init(final int p_instance_id) {
 		this.instance_id = p_instance_id;
@@ -98,7 +98,7 @@ public class GoogleLeaderboard {
 
 	public void leaderboard_submit(String id, int score) {
 		if (is_connected()) {
-      LeaderboardsClient leaderboardsClient = get_leaderboard_client();
+			LeaderboardsClient leaderboardsClient = get_leaderboard_client();
 
 			leaderboardsClient.submitScore(id, score);
 
@@ -107,15 +107,15 @@ public class GoogleLeaderboard {
 			String message = "PlayGameServices: Google not connected";
 
 			GodotLib.calldeferred(instance_id, "google_leaderboard_submit_failed", new Object[] { message });
-    }
+		}
 	}
 
 	public void leaderboard_show(final String l_id) {
 		if (is_connected()) {
-      LeaderboardsClient leaderboardsClient = get_leaderboard_client();
+			LeaderboardsClient leaderboardsClient = get_leaderboard_client();
 
 			leaderboardsClient.getLeaderboardIntent(l_id)
-      .addOnSuccessListener(new OnSuccessListener<Intent>() {
+			.addOnSuccessListener(new OnSuccessListener<Intent>() {
 				@Override
 				public void onSuccess (Intent intent) {
 					activity.startActivityForResult(intent, GodotAndroidRequest.GOOGLE_LEADERBOARD_REQUEST);
@@ -138,12 +138,12 @@ public class GoogleLeaderboard {
 			String message = "PlayGameServices: Google not connected";
 
 			GodotLib.calldeferred(instance_id, "google_leaderboard_show_failed", new Object[] { message });
-    }
+		}
 	}
 
 	public void leaderboard_showlist() {
 		if (is_connected()) {
-      LeaderboardsClient leaderboardsClient = get_leaderboard_client();
+			LeaderboardsClient leaderboardsClient = get_leaderboard_client();
 
 			leaderboardsClient.getAllLeaderboardsIntent()
 			.addOnSuccessListener(new OnSuccessListener<Intent>() {
@@ -170,6 +170,6 @@ public class GoogleLeaderboard {
 			String message = "PlayGameServices: Google not connected";
 
 			GodotLib.calldeferred(instance_id, "google_leaderboard_showlist_failed", new Object[] { message });
-    }
+		}
 	}
 }

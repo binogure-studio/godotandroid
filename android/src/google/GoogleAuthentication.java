@@ -89,7 +89,7 @@ public class GoogleAuthentication extends GodotAndroidCommon {
 		.requestScopes(Drive.SCOPE_APPFOLDER)
 		.build();
 
-    mGoogleApiClient = new GoogleApiClient.Builder(activity)
+		mGoogleApiClient = new GoogleApiClient.Builder(activity)
 		.addApi(Games.API)
 		.addScope(Games.SCOPE_GAMES)
 		.addApi(Auth.GOOGLE_SIGN_IN_API, options)
@@ -98,7 +98,7 @@ public class GoogleAuthentication extends GodotAndroidCommon {
 		.build();
 
 		mAuth = FirebaseAuth.getInstance();
-  }
+	}
 
 	public void onConnected() {
 		// Ensure we are not calling it twice in a row
@@ -140,9 +140,9 @@ public class GoogleAuthentication extends GodotAndroidCommon {
 		onStart();
 	}
 
-  public GoogleSignInAccount get_account() {
-    return mAccount;
-  }
+	public GoogleSignInAccount get_account() {
+		return mAccount;
+	}
 
 	private void disconnect_from_google() {
 		// Google sign out
@@ -164,66 +164,66 @@ public class GoogleAuthentication extends GodotAndroidCommon {
 			FirebaseUser firebaseUser = mAuth.getCurrentUser();
 
 			// We don't want to logout from firebase, we ant to logout from google.
-      if (firebaseUser != null) {
-        firebaseUser.unlink(GoogleAuthProvider.PROVIDER_ID)
-        .addOnCompleteListener(activity, new OnCompleteListener<AuthResult>() {
-          @Override
-          public void onComplete(@NonNull Task<AuthResult> task) {
-            if (task.isSuccessful()) {
-              // Auth provider unlinked from account
+			if (firebaseUser != null) {
+				firebaseUser.unlink(GoogleAuthProvider.PROVIDER_ID)
+				.addOnCompleteListener(activity, new OnCompleteListener<AuthResult>() {
+					@Override
+					public void onComplete(@NonNull Task<AuthResult> task) {
+						if (task.isSuccessful()) {
+							// Auth provider unlinked from account
 							disconnect_from_google();
-            } else {
-              String message = task.getException().getMessage();
+						} else {
+							String message = task.getException().getMessage();
 
-              // If sign in fails, display a message to the user.
-              Log.w(TAG, "Failed to disconnect from firebase: " + task.getException());
+							// If sign in fails, display a message to the user.
+							Log.w(TAG, "Failed to disconnect from firebase: " + task.getException());
 
-              updateConnectionStatus(GodotConnectStatus.CONNECTED);
-              GodotLib.calldeferred(instance_id, "google_auth_disconnect_failed", new Object[]{ message });
-            }
-          }
-        });
-      } else {
-        // Nothing else to check here
-        disconnect_from_google();
-      }
+							updateConnectionStatus(GodotConnectStatus.CONNECTED);
+							GodotLib.calldeferred(instance_id, "google_auth_disconnect_failed", new Object[]{ message });
+						}
+					}
+				});
+			} else {
+				// Nothing else to check here
+				disconnect_from_google();
+			}
 		}
 	}
 
 	private void firebaseAuthWithGoogle(final GoogleSignInAccount account) {
 		AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
-    FirebaseUser firebaseUser = mAuth.getCurrentUser();
-    Task<AuthResult> authResultTask;
+		FirebaseUser firebaseUser = mAuth.getCurrentUser();
+		Task<AuthResult> authResultTask;
 
-    if (firebaseUser != null) {
-      for (UserInfo userInfo : firebaseUser.getProviderData()) {
-        // Already logged using google
-        if (userInfo.getProviderId().equals(GoogleAuthProvider.PROVIDER_ID)) {
-          if (userInfo.getUid().equals(account.getId())) {
+		if (firebaseUser != null) {
+			for (UserInfo userInfo : firebaseUser.getProviderData()) {
+				// Already logged using google
+				if (userInfo.getProviderId().equals(GoogleAuthProvider.PROVIDER_ID)) {
+					if (userInfo.getUid().equals(account.getId())) {
 						Log.i(TAG, "Already logged in");
 
 						mAccount = account;
-            onConnected();
-          } else {
+						onConnected();
+					} else {
 						String message = "Failed to connect to firebase: users' id don't match. (" + userInfo.getUid() + " != " + account.getId() + ")";
 
 						// If sign in fails, display a message to the user.
 						Log.w(TAG, message);
 						GodotLib.calldeferred(instance_id, "google_auth_connect_failed", new Object[] { message });
 
-            updateConnectionStatus(GodotConnectStatus.DISCONNECTED);
-          }
+						updateConnectionStatus(GodotConnectStatus.DISCONNECTED);
+					}
 
-          return;
-        }
-      }
+					return;
+				}
+			}
 
-      // Link account
-      authResultTask = firebaseUser.linkWithCredential(credential);
-    } else {
-      // SignIn
-      authResultTask = mAuth.signInWithCredential(credential);
-    }
+			// Link account
+			authResultTask = firebaseUser.linkWithCredential(credential);
+		} else {
+			// SignIn
+			authResultTask = mAuth.signInWithCredential(credential);
+		}
 
 		authResultTask.addOnCompleteListener(activity, new OnCompleteListener<AuthResult>() {
 			@Override

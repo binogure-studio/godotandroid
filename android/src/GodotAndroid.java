@@ -18,6 +18,7 @@ import android.os.Bundle;
 import com.godot.game.BuildConfig;
 import com.google.android.gms.games.SnapshotsClient;
 
+import org.godotengine.godot.GodotLib;
 import org.godotengine.godot.GodotAndroidRequest;
 
 import java.io.File;
@@ -29,6 +30,9 @@ import org.json.JSONObject;
 import org.json.JSONException;
 
 import org.godotengine.godot.Dictionary;
+
+// Import godot share
+import org.godotengine.godot.GodotShare;
 
 // Import google play service
 import org.godotengine.godot.google.GoogleAchievements;
@@ -53,6 +57,8 @@ public class GodotAndroid extends Godot.SingletonBase {
 	private static final String TAG = "GodotAndroid";
 	private static Context context;
 	private static Activity activity;
+
+	private GodotShare godotShare;
 
 	private GoogleAchievements googleAchievements;
 	private GoogleAuthentication googleAuthentication;
@@ -131,7 +137,7 @@ public class GodotAndroid extends Godot.SingletonBase {
 			"firebase_connect",
 
 			// Share
-			"share", "get_shared_directory"
+			"godot_initialize", "godot_share", "godot_get_shared_directory"
 		});
 
 		activity = p_activity;
@@ -151,10 +157,20 @@ public class GodotAndroid extends Godot.SingletonBase {
 
 		facebookAuthentication = FacebookAuthentication.getInstance(activity);
 		facebookShare = FacebookShare.getInstance(activity);
+
+		godotShare = GodotShare.getInstance(activity);
 	}
 
 	public Dictionary get_google_resolution_policies() {
 		return GOOGLE_SNAPSHOT_RESOLUTION_POLICIES;
+	}
+
+	public void godot_initialize(final int instance_id) {
+		activity.runOnUiThread(new Runnable() {
+			public void run() {
+				godotShare.init(instance_id);
+			}
+		});
 	}
 
 	public void firebase_initialize(final int instance_id) {
@@ -289,7 +305,7 @@ public class GodotAndroid extends Godot.SingletonBase {
 		return facebookAuthentication.isConnected();
 	}
 
-  public void facebook_share_link(final String link, final String quote, final String hashtag, final String imageUrl) {
+	public void facebook_share_link(final String link, final String quote, final String hashtag, final String imageUrl) {
 		activity.runOnUiThread(new Runnable() {
 			public void run() {
 				if (quote.length() > 0 && hashtag.length() > 0 && imageUrl.length() > 0) {
@@ -384,34 +400,14 @@ public class GodotAndroid extends Godot.SingletonBase {
 		});
 	}
 
-	public String get_shared_directory() {
-		return "/shared";
+	public String godot_get_shared_directory() {
+		return godotShare.get_shared_directory();
 	}
 
-	public void share(final String title, final String message, final String image_filename) {
+	public void godot_share(final String title, final String message, final String image_filename) {
 		activity.runOnUiThread(new Runnable() {
 			public void run() {
-				Intent shareIntent = new Intent();
-
-				shareIntent.setAction(Intent.ACTION_SEND);
-
-				if (image_filename.length() > 0) {
-					File imagePath = new File(context.getFilesDir(), get_shared_directory());
-					File imageFile = new File(imagePath, image_filename);
-					Uri contentUri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".fileprovider", imageFile);
-
-					if (contentUri != null) {
-						shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-						shareIntent.setDataAndType(contentUri, context.getContentResolver().getType(contentUri));
-						shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
-					} else {
-						Log.w(TAG, "File not found: " + get_shared_directory() + "/" + image_filename);
-					}
-				}
-
-				shareIntent.putExtra(Intent.EXTRA_TEXT, message);
-				shareIntent.setType("*/*");
-				activity.startActivity(Intent.createChooser(shareIntent, title));
+				godotShare.share(title, message, image_filename);
 			}
 		});
 	}
@@ -433,6 +429,9 @@ public class GodotAndroid extends Godot.SingletonBase {
 		firebaseCurrentAnalytics.onActivityResult(requestCode, resultCode, data);
 		firebaseCurrentInvite.onActivityResult(requestCode, resultCode, data);
 		firebaseCurrentAuthentication.onActivityResult(requestCode, resultCode, data);
+
+		// Trigger GodotShare
+		godotShare.onActivityResult(requestCode, resultCode, data);
 	}
 
 	protected void onMainPause () {
@@ -452,6 +451,9 @@ public class GodotAndroid extends Godot.SingletonBase {
 		firebaseCurrentAnalytics.onPause();
 		firebaseCurrentInvite.onPause();
 		firebaseCurrentAuthentication.onPause();
+
+		// Trigger GodotShare
+		godotShare.onPause();
 	}
 
 	protected void onMainResume () {
@@ -471,6 +473,9 @@ public class GodotAndroid extends Godot.SingletonBase {
 		firebaseCurrentAnalytics.onResume();
 		firebaseCurrentInvite.onResume();
 		firebaseCurrentAuthentication.onResume();
+
+		// Trigger GodotShare
+		godotShare.onResume();
 	}
 
 	protected void onMainDestroy () {
@@ -490,5 +495,8 @@ public class GodotAndroid extends Godot.SingletonBase {
 		firebaseCurrentAnalytics.onStop();
 		firebaseCurrentInvite.onStop();
 		firebaseCurrentAuthentication.onStop();
+
+		// Trigger GodotShare
+		godotShare.onStop();
 	}
 }

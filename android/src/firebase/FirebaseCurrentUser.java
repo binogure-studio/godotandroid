@@ -16,11 +16,11 @@ import org.json.JSONException;
 public class FirebaseCurrentUser {
 	private static final String TAG = "FirebaseCurrentUser";
 
-  private static int instance_id;
+	private static int instance_id;
 	private static Activity activity = null;
-  private static FirebaseCurrentUser mInstance = null;
+	private static FirebaseCurrentUser mInstance = null;
 
-  private FirebaseAuth mAuth;
+	private FirebaseAuth mAuth;
 
 	public static synchronized FirebaseCurrentUser getInstance (Activity p_activity) {
 		if (mInstance == null) {
@@ -31,23 +31,23 @@ public class FirebaseCurrentUser {
 	}
 
 	public FirebaseCurrentUser(Activity p_activity) {
-    activity = p_activity;
+		activity = p_activity;
 
 		mAuth = FirebaseAuth.getInstance();
 	}
 
 	public void init(final int p_instance_id) {
-    this.instance_id = p_instance_id;
+		this.instance_id = p_instance_id;
 
-    onStart();
-  }
+		onStart();
+	}
 
-  public String get_user_details() {
+	public String get_user_details() {
 		GooglePlayer googlePlayer = GooglePlayer.getInstance(activity);
-    JSONObject userDetails = googlePlayer.get_user_details();
-    FirebaseUser firebaseUser = mAuth.getCurrentUser();
+		JSONObject userDetails = googlePlayer.get_user_details();
+		FirebaseUser firebaseUser = mAuth.getCurrentUser();
 
-    if (firebaseUser != null) {
+		if (firebaseUser != null) {
 			try {
 				for (UserInfo userInfo : firebaseUser.getProviderData()) {
 					String providerId = userInfo.getProviderId();
@@ -60,19 +60,19 @@ public class FirebaseCurrentUser {
 			} catch (JSONException e) {
 				Log.w(TAG, "Failed to get the current user: " + e);
 			}
-    } else {
+		} else {
 			Log.w(TAG, "Failed to get the current user: not connected");
 		}
 
-    return userDetails.toString();
-  }
+		return userDetails.toString();
+	}
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-    // Nothing to do
+		// Nothing to do
 	}
 
 	public void onStart() {
-    // Nothing to do
+		// Nothing to do
 	}
 
 	public void onPause() {
