@@ -31,8 +31,9 @@ import org.json.JSONException;
 
 import org.godotengine.godot.Dictionary;
 
-// Import godot share
+// Import godot utils
 import org.godotengine.godot.GodotShare;
+import org.godotengine.godot.GodotNetwork;
 
 // Import google play service
 import org.godotengine.godot.google.GoogleAchievements;
@@ -59,6 +60,7 @@ public class GodotAndroid extends Godot.SingletonBase {
 	private static Activity activity;
 
 	private GodotShare godotShare;
+	private GodotNetwork godotNetwork;
 
 	private GoogleAchievements googleAchievements;
 	private GoogleAuthentication googleAuthentication;
@@ -137,7 +139,10 @@ public class GodotAndroid extends Godot.SingletonBase {
 			"firebase_connect",
 
 			// Share
-			"godot_initialize", "godot_share", "godot_get_shared_directory"
+			"godot_initialize", "godot_share", "godot_get_shared_directory",
+
+			// Network
+			"godot_is_online", "godot_is_wifi_connected", "godot_is_mobile_connected"
 		});
 
 		activity = p_activity;
@@ -159,6 +164,7 @@ public class GodotAndroid extends Godot.SingletonBase {
 		facebookShare = FacebookShare.getInstance(activity);
 
 		godotShare = GodotShare.getInstance(activity);
+		godotNetwork = GodotNetwork.getInstance(activity);
 	}
 
 	public Dictionary get_google_resolution_policies() {
@@ -169,6 +175,7 @@ public class GodotAndroid extends Godot.SingletonBase {
 		activity.runOnUiThread(new Runnable() {
 			public void run() {
 				godotShare.init(instance_id);
+				godotNetwork.init(instance_id);
 			}
 		});
 	}
@@ -412,6 +419,18 @@ public class GodotAndroid extends Godot.SingletonBase {
 		});
 	}
 
+	public boolean godot_is_online() {
+		return godotNetwork.isOnline();
+	}
+
+	public boolean godot_is_wifi_connected() {
+		return godotNetwork.isWifiConnected();
+	}
+
+	public boolean godot_is_mobile_connected() {
+		return godotNetwork.isMobileConnected();
+	}
+
 	protected void onMainActivityResult (int requestCode, int resultCode, Intent data) {
 		// Trigger google's services
 		googleAchievements.onActivityResult(requestCode, resultCode, data);
@@ -430,8 +449,9 @@ public class GodotAndroid extends Godot.SingletonBase {
 		firebaseCurrentInvite.onActivityResult(requestCode, resultCode, data);
 		firebaseCurrentAuthentication.onActivityResult(requestCode, resultCode, data);
 
-		// Trigger GodotShare
+		// Trigger Godot Utils
 		godotShare.onActivityResult(requestCode, resultCode, data);
+		godotNetwork.onActivityResult(requestCode, resultCode, data);
 	}
 
 	protected void onMainPause () {
@@ -452,8 +472,9 @@ public class GodotAndroid extends Godot.SingletonBase {
 		firebaseCurrentInvite.onPause();
 		firebaseCurrentAuthentication.onPause();
 
-		// Trigger GodotShare
+		// Trigger Godot Utils
 		godotShare.onPause();
+		godotNetwork.onPause();
 	}
 
 	protected void onMainResume () {
@@ -474,8 +495,9 @@ public class GodotAndroid extends Godot.SingletonBase {
 		firebaseCurrentInvite.onResume();
 		firebaseCurrentAuthentication.onResume();
 
-		// Trigger GodotShare
+		// Trigger Godot Utils
 		godotShare.onResume();
+		godotNetwork.onResume();
 	}
 
 	protected void onMainDestroy () {
@@ -496,7 +518,8 @@ public class GodotAndroid extends Godot.SingletonBase {
 		firebaseCurrentInvite.onStop();
 		firebaseCurrentAuthentication.onStop();
 
-		// Trigger GodotShare
+		// Trigger Godot Utils
 		godotShare.onStop();
+		godotNetwork.onStop();
 	}
 }

@@ -255,7 +255,13 @@ public class GoogleAuthentication extends GodotAndroidCommon {
 	}
 
 	private void silentConnectHandler(GoogleSignInResult result) {
-		if (result != null && result.isSuccess()) {
+		if (result == null)  {
+			String message = "Failed to connect: result is null";
+			updateConnectionStatus(GodotConnectStatus.DISCONNECTED);
+
+			Log.w(TAG, message);
+			GodotLib.calldeferred(instance_id, "google_auth_connect_failed", new Object[] { message });
+		} else if (result.isSuccess()) {
 			GoogleSignInAccount account = result.getSignInAccount();
 
 			firebaseAuthWithGoogle(account);
