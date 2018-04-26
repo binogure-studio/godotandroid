@@ -4,21 +4,30 @@
 [![Godot Engine](https://img.shields.io/badge/GodotEngine-2.1-orange.svg?longCache=true&style=flat-square)](https://github.com/godotengine/godot)
 [![LICENCE](https://img.shields.io/badge/License-MIT-green.svg?longCache=true&style=flat-square)](https://github.com/xsellier/godotandroid/blob/master/LICENSE)
 
+**Production ready**
+
 Android services for Godot Engine 2.1, including:
 
+* Godot Android
+   * Share text/image
+   * Network
 * Google play game service
-   * Authentication
+   * Authentication (linked account)
    * Leaderboards
    * Achievements
    * Snapshots
+   * Player
 * Facebook
-   * Authentication
+   * Authentication (linked account)
    * Share
 * Firebase
+   * Authentication (anonymous)
    * User details
    * Analytics
    * Invite
    * Notification
+
+
 
 # Usage
 
