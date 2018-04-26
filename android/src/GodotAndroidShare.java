@@ -15,7 +15,6 @@ import android.view.View;
 import android.os.Bundle;
 
 import com.godot.game.BuildConfig;
-import com.google.android.gms.games.SnapshotsClient;
 
 import org.godotengine.godot.GodotLib;
 import org.godotengine.godot.GodotAndroidRequest;
@@ -31,23 +30,23 @@ import org.json.JSONException;
 import org.godotengine.godot.Dictionary;
 
 
-public class GodotShare {
-	private static final String TAG = "GodotShare";
+public class GodotAndroidShare {
+	private static final String TAG = "GodotAndroidShare";
 
 	private static int instance_id;
 	private static Context context;
 	private static Activity activity = null;
-	private static GodotShare mInstance = null;
+	private static GodotAndroidShare mInstance = null;
 
-	public static synchronized GodotShare getInstance (Activity p_activity) {
+	public static synchronized GodotAndroidShare getInstance (Activity p_activity) {
 		if (mInstance == null) {
-			mInstance = new GodotShare(p_activity);
+			mInstance = new GodotAndroidShare(p_activity);
 		}
 
 		return mInstance;
 	}
 
-	public GodotShare(Activity p_activity) {
+	public GodotAndroidShare(Activity p_activity) {
 		activity = p_activity;
 		context = activity.getApplicationContext();
 	}

@@ -8,24 +8,24 @@ import android.net.NetworkInfo;
 import android.content.Context;
 import android.content.Intent;
 
-public class GodotNetwork {
+public class GodotAndroidNetwork {
 
-	private static final String TAG = "GodotNetwork";
-	private ConnectivityManager connectivityManager = null;
+	private static final String TAG = "GodotAndroidNetwork";
+	private static ConnectivityManager connectivityManager = null;
 	private static int instance_id;
 
 	private static Activity activity = null;
-	private static GodotNetwork mInstance = null;
+	private static GodotAndroidNetwork mInstance = null;
 
-	public static synchronized GodotNetwork getInstance (Activity p_activity) {
+	public static synchronized GodotAndroidNetwork getInstance (Activity p_activity) {
 		if (mInstance == null) {
-			mInstance = new GodotNetwork(p_activity);
+			mInstance = new GodotAndroidNetwork(p_activity);
 		}
 
 		return mInstance;
 	}
 
-	public GodotNetwork(final Activity p_activity) {
+	public GodotAndroidNetwork(final Activity p_activity) {
 		activity = p_activity;
 		connectivityManager = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
 	}

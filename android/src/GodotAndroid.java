@@ -32,8 +32,8 @@ import org.json.JSONException;
 import org.godotengine.godot.Dictionary;
 
 // Import godot utils
-import org.godotengine.godot.GodotShare;
-import org.godotengine.godot.GodotNetwork;
+import org.godotengine.godot.GodotAndroidShare;
+import org.godotengine.godot.GodotAndroidNetwork;
 
 // Import google play service
 import org.godotengine.godot.google.GoogleAchievements;
@@ -59,8 +59,8 @@ public class GodotAndroid extends Godot.SingletonBase {
 	private static Context context;
 	private static Activity activity;
 
-	private GodotShare godotShare;
-	private GodotNetwork godotNetwork;
+	private GodotAndroidShare godotAndroidShare;
+	private GodotAndroidNetwork godotAndroidNetwork;
 
 	private GoogleAchievements googleAchievements;
 	private GoogleAuthentication googleAuthentication;
@@ -81,11 +81,11 @@ public class GodotAndroid extends Godot.SingletonBase {
 	static {
 		GOOGLE_SNAPSHOT_RESOLUTION_POLICIES = new Dictionary();
 
-		GOOGLE_SNAPSHOT_RESOLUTION_POLICIES.put("RESOLUTION_POLICY_HIGHEST_PROGRESS", new Integer(SnapshotsClient.RESOLUTION_POLICY_HIGHEST_PROGRESS));
-		GOOGLE_SNAPSHOT_RESOLUTION_POLICIES.put("RESOLUTION_POLICY_LAST_KNOWN_GOOD", new Integer(SnapshotsClient.RESOLUTION_POLICY_LAST_KNOWN_GOOD));
-		GOOGLE_SNAPSHOT_RESOLUTION_POLICIES.put("RESOLUTION_POLICY_LONGEST_PLAYTIME", new Integer(SnapshotsClient.RESOLUTION_POLICY_LONGEST_PLAYTIME));
-		GOOGLE_SNAPSHOT_RESOLUTION_POLICIES.put("RESOLUTION_POLICY_MANUAL", new Integer(SnapshotsClient.RESOLUTION_POLICY_MANUAL));
-		GOOGLE_SNAPSHOT_RESOLUTION_POLICIES.put("RESOLUTION_POLICY_MOST_RECENTLY_MODIFIED", new Integer(SnapshotsClient.RESOLUTION_POLICY_MOST_RECENTLY_MODIFIED));
+		GOOGLE_SNAPSHOT_RESOLUTION_POLICIES.put("RESOLUTION_POLICY_HIGHEST_PROGRESS", Integer.valueOf(SnapshotsClient.RESOLUTION_POLICY_HIGHEST_PROGRESS));
+		GOOGLE_SNAPSHOT_RESOLUTION_POLICIES.put("RESOLUTION_POLICY_LAST_KNOWN_GOOD", Integer.valueOf(SnapshotsClient.RESOLUTION_POLICY_LAST_KNOWN_GOOD));
+		GOOGLE_SNAPSHOT_RESOLUTION_POLICIES.put("RESOLUTION_POLICY_LONGEST_PLAYTIME", Integer.valueOf(SnapshotsClient.RESOLUTION_POLICY_LONGEST_PLAYTIME));
+		GOOGLE_SNAPSHOT_RESOLUTION_POLICIES.put("RESOLUTION_POLICY_MANUAL", Integer.valueOf(SnapshotsClient.RESOLUTION_POLICY_MANUAL));
+		GOOGLE_SNAPSHOT_RESOLUTION_POLICIES.put("RESOLUTION_POLICY_MOST_RECENTLY_MODIFIED", Integer.valueOf(SnapshotsClient.RESOLUTION_POLICY_MOST_RECENTLY_MODIFIED));
 	};
 
 	static public Godot.SingletonBase initialize (Activity p_activity) {
@@ -163,8 +163,8 @@ public class GodotAndroid extends Godot.SingletonBase {
 		facebookAuthentication = FacebookAuthentication.getInstance(activity);
 		facebookShare = FacebookShare.getInstance(activity);
 
-		godotShare = GodotShare.getInstance(activity);
-		godotNetwork = GodotNetwork.getInstance(activity);
+		godotAndroidShare = GodotAndroidShare.getInstance(activity);
+		godotAndroidNetwork = GodotAndroidNetwork.getInstance(activity);
 	}
 
 	public Dictionary get_google_resolution_policies() {
@@ -174,8 +174,8 @@ public class GodotAndroid extends Godot.SingletonBase {
 	public void godot_initialize(final int instance_id) {
 		activity.runOnUiThread(new Runnable() {
 			public void run() {
-				godotShare.init(instance_id);
-				godotNetwork.init(instance_id);
+				godotAndroidShare.init(instance_id);
+				godotAndroidNetwork.init(instance_id);
 			}
 		});
 	}
@@ -408,27 +408,27 @@ public class GodotAndroid extends Godot.SingletonBase {
 	}
 
 	public String godot_get_shared_directory() {
-		return godotShare.get_shared_directory();
+		return godotAndroidShare.get_shared_directory();
 	}
 
 	public void godot_share(final String title, final String message, final String image_filename) {
 		activity.runOnUiThread(new Runnable() {
 			public void run() {
-				godotShare.share(title, message, image_filename);
+				godotAndroidShare.share(title, message, image_filename);
 			}
 		});
 	}
 
 	public boolean godot_is_online() {
-		return godotNetwork.isOnline();
+		return godotAndroidNetwork.isOnline();
 	}
 
 	public boolean godot_is_wifi_connected() {
-		return godotNetwork.isWifiConnected();
+		return godotAndroidNetwork.isWifiConnected();
 	}
 
 	public boolean godot_is_mobile_connected() {
-		return godotNetwork.isMobileConnected();
+		return godotAndroidNetwork.isMobileConnected();
 	}
 
 	protected void onMainActivityResult (int requestCode, int resultCode, Intent data) {
@@ -450,8 +450,8 @@ public class GodotAndroid extends Godot.SingletonBase {
 		firebaseCurrentAuthentication.onActivityResult(requestCode, resultCode, data);
 
 		// Trigger Godot Utils
-		godotShare.onActivityResult(requestCode, resultCode, data);
-		godotNetwork.onActivityResult(requestCode, resultCode, data);
+		godotAndroidShare.onActivityResult(requestCode, resultCode, data);
+		godotAndroidNetwork.onActivityResult(requestCode, resultCode, data);
 	}
 
 	protected void onMainPause () {
@@ -473,8 +473,8 @@ public class GodotAndroid extends Godot.SingletonBase {
 		firebaseCurrentAuthentication.onPause();
 
 		// Trigger Godot Utils
-		godotShare.onPause();
-		godotNetwork.onPause();
+		godotAndroidShare.onPause();
+		godotAndroidNetwork.onPause();
 	}
 
 	protected void onMainResume () {
@@ -496,8 +496,8 @@ public class GodotAndroid extends Godot.SingletonBase {
 		firebaseCurrentAuthentication.onResume();
 
 		// Trigger Godot Utils
-		godotShare.onResume();
-		godotNetwork.onResume();
+		godotAndroidShare.onResume();
+		godotAndroidNetwork.onResume();
 	}
 
 	protected void onMainDestroy () {
@@ -519,7 +519,7 @@ public class GodotAndroid extends Godot.SingletonBase {
 		firebaseCurrentAuthentication.onStop();
 
 		// Trigger Godot Utils
-		godotShare.onStop();
-		godotNetwork.onStop();
+		godotAndroidShare.onStop();
+		godotAndroidNetwork.onStop();
 	}
 }

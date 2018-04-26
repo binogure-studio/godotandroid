@@ -151,7 +151,7 @@ public class GooglePlayer {
 					Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
 
 					try {
-						FileOutputStream out = context.openFileOutput(pictures_local_name, Context.MODE_MULTI_PROCESS);
+						FileOutputStream out = context.openFileOutput(pictures_local_name, Context.MODE_PRIVATE);
 
 						bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
 						out.flush();
