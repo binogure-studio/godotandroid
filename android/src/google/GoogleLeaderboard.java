@@ -213,7 +213,7 @@ public class GoogleLeaderboard {
 									AnnotatedData<LeaderboardScore> result = task.getResult();
 									LeaderboardScore leaderboardScore = result.get();
 
-									GodotLib.calldeferred(instance_id, "google_leaderboard_loaded_score", new Object[] { leaderboardScore.getRawScore() });
+									GodotLib.calldeferred(instance_id, "google_leaderboard_loaded_score", new Object[] { leaderboardScore.getRawScore(), leaderboardScore.getRank() });
 								} else {
 									Log.e(TAG, "Error while loading score: " + task.getException());
 
@@ -292,7 +292,7 @@ public class GoogleLeaderboard {
 										Log.w(TAG, "Failed to load player's game informations: " + e);
 									}
 
-									GodotLib.calldeferred(instance_id, "google_leaderboard_loaded_centered_scores", new Object[] { leaderboard_result });
+									GodotLib.calldeferred(instance_id, "google_leaderboard_loaded_centered_scores", new Object[] { leaderboard_result.toString() });
 								} else {
 									Log.e(TAG, "Error while loading centered scores: " + task.getException());
 
@@ -370,7 +370,7 @@ public class GoogleLeaderboard {
 										Log.w(TAG, "Failed to load player's game informations: " + e);
 									}
 
-									GodotLib.calldeferred(instance_id, "google_leaderboard_loaded_top_score", new Object[] { leaderboard_result });
+									GodotLib.calldeferred(instance_id, "google_leaderboard_loaded_top_score", new Object[] { leaderboard_result.toString() });
 								} else {
 									Log.e(TAG, "Error while loading top scores: " + task.getException());
 
