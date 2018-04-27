@@ -213,6 +213,8 @@ public class GoogleLeaderboard {
 									AnnotatedData<LeaderboardScore> result = task.getResult();
 									LeaderboardScore leaderboardScore = result.get();
 
+									Log.d(TAG, "Current user's loaded, score: " + leaderboardScore.getRawScore() + ", rank: " + leaderboardScore.getRank());
+
 									GodotLib.calldeferred(instance_id, "google_leaderboard_loaded_score", new Object[] { leaderboardScore.getRawScore(), leaderboardScore.getRank() });
 								} else {
 									Log.e(TAG, "Error while loading score: " + task.getException());
@@ -284,9 +286,9 @@ public class GoogleLeaderboard {
 
 											leaderboard_result.put(String.valueOf(leaderboardScore.getRank()) + ":score", leaderboardScore.getRawScore());
 											leaderboard_result.put(String.valueOf(leaderboardScore.getRank()) + ":name", displayName);
-											leaderboard_result.put(String.valueOf(leaderboardScore.getRank()) + ":photo_path", "user://" + displayName);
+											leaderboard_result.put(String.valueOf(leaderboardScore.getRank()) + ":photo_path", "user://" + displayName + ".png");
 
-											googlePlayer.copy_user_picture(leaderboardScore.getScoreHolderIconImageUri(), displayName);
+											googlePlayer.copy_user_picture(leaderboardScore.getScoreHolderIconImageUri(), displayName + ".png");
 										}
 									} catch (JSONException e) {
 										Log.w(TAG, "Failed to load player's game informations: " + e);
@@ -362,9 +364,9 @@ public class GoogleLeaderboard {
 
 											leaderboard_result.put(String.valueOf(leaderboardScore.getRank()) + ":score", leaderboardScore.getRawScore());
 											leaderboard_result.put(String.valueOf(leaderboardScore.getRank()) + ":name", displayName);
-											leaderboard_result.put(String.valueOf(leaderboardScore.getRank()) + ":photo_path", "user://" + displayName);
+											leaderboard_result.put(String.valueOf(leaderboardScore.getRank()) + ":photo_path", "user://" + displayName + ".png");
 
-											googlePlayer.copy_user_picture(leaderboardScore.getScoreHolderIconImageUri(), displayName);
+											googlePlayer.copy_user_picture(leaderboardScore.getScoreHolderIconImageUri(), displayName + ".png");
 										}
 									} catch (JSONException e) {
 										Log.w(TAG, "Failed to load player's game informations: " + e);
