@@ -14,6 +14,7 @@ import android.support.annotation.NonNull;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Iterator;
 import java.io.IOException;
 
 import org.json.JSONObject;
@@ -21,6 +22,7 @@ import org.json.JSONException;
 
 import org.godotengine.godot.GodotLib;
 import org.godotengine.godot.GodotAndroidRequest;
+import org.godotengine.godot.google.GooglePlayer;
 
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.ApiException;
@@ -30,14 +32,21 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.games.AchievementsClient;
+import com.google.android.gms.games.AnnotatedData;
 import com.google.android.gms.games.Games;
+
 import com.google.android.gms.games.LeaderboardsClient;
+import com.google.android.gms.games.LeaderboardsClient.LeaderboardScores;
+import com.google.android.gms.games.leaderboard.LeaderboardScore;
+import com.google.android.gms.games.leaderboard.LeaderboardScoreBuffer;
+import com.google.android.gms.games.leaderboard.LeaderboardVariant;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;
 
 public class GoogleLeaderboard {
+	private static final int MAX_RESULT = 10;
 	private static int instance_id;
 	private static Activity activity = null;
 	private static Context context = null;
@@ -170,6 +179,216 @@ public class GoogleLeaderboard {
 			String message = "PlayGameServices: Google not connected";
 
 			GodotLib.calldeferred(instance_id, "google_leaderboard_showlist_failed", new Object[] { message });
+		}
+	}
+
+	public void leaderboard_load_player_score(final String leaderboard_id) {
+		leaderboard_load_player_score(leaderboard_id, LeaderboardVariant.TIME_SPAN_ALL_TIME);
+	}
+
+	public void leaderboard_load_player_score(final String leaderboard_id, final int time_span) {
+		if (is_connected()) {
+			AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+				@Override
+				protected Void doInBackground(Void... params) {
+					LeaderboardsClient leaderboardsClient = get_leaderboard_client();
+
+					// Forcing LeaderboardVariant.COLLECTION_PUBLIC value because others values are deprecated.
+					// See: https://developers.google.com/android/reference/com/google/android/gms/games/leaderboard/LeaderboardVariant#COLLECTION_SOCIAL
+					leaderboardsClient.loadCurrentPlayerLeaderboardScore(leaderboard_id, time_span, LeaderboardVariant.COLLECTION_PUBLIC)
+						.addOnFailureListener(new OnFailureListener() {
+							@Override
+							public void onFailure(@NonNull Exception e) {
+								String message = e.getMessage();
+
+								Log.e(TAG, "Error while loading score: " + message);
+
+								GodotLib.calldeferred(instance_id, "google_leaderboard_load_score_failed", new Object[] { message });
+							}
+						})
+						.addOnCompleteListener(new OnCompleteListener<AnnotatedData<LeaderboardScore>>() {
+							@Override
+							public void onComplete(@NonNull Task<AnnotatedData<LeaderboardScore>> task) {
+								if (task.isSuccessful()) {
+									AnnotatedData<LeaderboardScore> result = task.getResult();
+									LeaderboardScore leaderboardScore = result.get();
+
+									GodotLib.calldeferred(instance_id, "google_leaderboard_loaded_score", new Object[] { leaderboardScore.getRawScore() });
+								} else {
+									Log.e(TAG, "Error while loading score: " + task.getException());
+
+									GodotLib.calldeferred(instance_id, "google_leaderboard_load_score_failed", new Object[]{ task.getException().getMessage() });
+								}
+							}
+					});
+
+					return null;
+				}
+			};
+
+			task.execute();
+
+			Log.i(TAG, "Loading user's score");
+		} else {
+			String message = "PlayGameServices: Google not connected";
+
+			GodotLib.calldeferred(instance_id, "google_leaderboard_load_score_failed", new Object[] { message });
+		}
+	}
+
+	public void leaderboard_load_player_centered_scores(final String leaderboard_id) {
+		leaderboard_load_player_centered_scores(leaderboard_id, LeaderboardVariant.TIME_SPAN_ALL_TIME, MAX_RESULT, false);
+	}
+
+	public void leaderboard_load_player_centered_scores(final String leaderboard_id, final int time_span) {
+		leaderboard_load_player_centered_scores(leaderboard_id, time_span, MAX_RESULT, false);
+	}
+
+	public void leaderboard_load_player_centered_scores(final String leaderboard_id, final int time_span, final int max_results) {
+		leaderboard_load_player_centered_scores(leaderboard_id, time_span, max_results, false);
+	}
+
+	public void leaderboard_load_player_centered_scores(final String leaderboard_id, final int time_span, final int max_results, final boolean force_reload) {
+		if (is_connected()) {
+			AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+				@Override
+				protected Void doInBackground(Void... params) {
+					LeaderboardsClient leaderboardsClient = get_leaderboard_client();
+
+					// Forcing LeaderboardVariant.COLLECTION_PUBLIC value because others values are deprecated.
+					// See: https://developers.google.com/android/reference/com/google/android/gms/games/leaderboard/LeaderboardVariant#COLLECTION_SOCIAL
+					leaderboardsClient.loadPlayerCenteredScores(leaderboard_id, time_span, LeaderboardVariant.COLLECTION_PUBLIC, max_results, force_reload)
+						.addOnFailureListener(new OnFailureListener() {
+							@Override
+							public void onFailure(@NonNull Exception e) {
+								String message = e.getMessage();
+
+								Log.e(TAG, "Error while loading centered scores: " + message);
+
+								GodotLib.calldeferred(instance_id, "google_leaderboard_loaded_centered_scores", new Object[] { message });
+							}
+						})
+						.addOnCompleteListener(new OnCompleteListener<AnnotatedData<LeaderboardScores>>() {
+							@Override
+							public void onComplete(@NonNull Task<AnnotatedData<LeaderboardScores>> task) {
+								if (task.isSuccessful()) {
+									JSONObject leaderboard_result = new JSONObject();
+									AnnotatedData<LeaderboardScores> result = task.getResult();
+									LeaderboardScoreBuffer leaderboardScores = result.get().getScores();
+									GooglePlayer googlePlayer = GooglePlayer.getInstance(activity);
+
+									try {
+										for (Iterator<LeaderboardScore> iterator = leaderboardScores.iterator(); iterator.hasNext(); ) {
+											LeaderboardScore leaderboardScore = iterator.next();
+											String displayName = leaderboardScore.getScoreHolderDisplayName();
+
+											leaderboard_result.put(String.valueOf(leaderboardScore.getRank()) + ":score", leaderboardScore.getRawScore());
+											leaderboard_result.put(String.valueOf(leaderboardScore.getRank()) + ":name", displayName);
+											leaderboard_result.put(String.valueOf(leaderboardScore.getRank()) + ":photo_path", "user://" + displayName);
+
+											googlePlayer.copy_user_picture(leaderboardScore.getScoreHolderIconImageUri(), displayName);
+										}
+									} catch (JSONException e) {
+										Log.w(TAG, "Failed to load player's game informations: " + e);
+									}
+
+									GodotLib.calldeferred(instance_id, "google_leaderboard_loaded_centered_scores", new Object[] { leaderboard_result });
+								} else {
+									Log.e(TAG, "Error while loading centered scores: " + task.getException());
+
+									GodotLib.calldeferred(instance_id, "google_leaderboard_load_centered_scores_failed", new Object[]{ task.getException().getMessage() });
+								}
+							}
+					});
+
+					return null;
+				}
+			};
+
+			task.execute();
+			Log.i(TAG, "Loading scores centered on user");
+		} else {
+			String message = "PlayGameServices: Google not connected";
+
+			GodotLib.calldeferred(instance_id, "google_leaderboard_load_centered_scores_failed", new Object[] { message });
+		}
+	}
+
+	public void leaderboard_load_top_scores(final String leaderboard_id) {
+		leaderboard_load_top_scores(leaderboard_id, LeaderboardVariant.TIME_SPAN_ALL_TIME, MAX_RESULT, false);
+	}
+
+	public void leaderboard_load_top_scores(final String leaderboard_id, final int time_span) {
+		leaderboard_load_top_scores(leaderboard_id, time_span, MAX_RESULT, false);
+	}
+
+	public void leaderboard_load_top_scores(final String leaderboard_id, final int time_span, final int max_results) {
+		leaderboard_load_top_scores(leaderboard_id, time_span, max_results, false);
+	}
+
+	public void leaderboard_load_top_scores(final String leaderboard_id, final int time_span, final int max_results, final boolean force_reload) {
+		if (is_connected()) {
+			AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+				@Override
+				protected Void doInBackground(Void... params) {
+					LeaderboardsClient leaderboardsClient = get_leaderboard_client();
+
+					// Forcing LeaderboardVariant.COLLECTION_PUBLIC value because others values are deprecated.
+					// See: https://developers.google.com/android/reference/com/google/android/gms/games/leaderboard/LeaderboardVariant#COLLECTION_SOCIAL
+					leaderboardsClient.loadTopScores(leaderboard_id, time_span, LeaderboardVariant.COLLECTION_PUBLIC, max_results, force_reload)
+						.addOnFailureListener(new OnFailureListener() {
+							@Override
+							public void onFailure(@NonNull Exception e) {
+								String message = e.getMessage();
+
+								Log.e(TAG, "Error while loading top scores: " + message);
+
+								GodotLib.calldeferred(instance_id, "google_leaderboard_load_top_scores_failed", new Object[] { message });
+							}
+						})
+						.addOnCompleteListener(new OnCompleteListener<AnnotatedData<LeaderboardScores>>() {
+							@Override
+							public void onComplete(@NonNull Task<AnnotatedData<LeaderboardScores>> task) {
+								if (task.isSuccessful()) {
+									JSONObject leaderboard_result = new JSONObject();
+									AnnotatedData<LeaderboardScores> result = task.getResult();
+									LeaderboardScoreBuffer leaderboardScores = result.get().getScores();
+									GooglePlayer googlePlayer = GooglePlayer.getInstance(activity);
+
+									try {
+										for (Iterator<LeaderboardScore> iterator = leaderboardScores.iterator(); iterator.hasNext(); ) {
+											LeaderboardScore leaderboardScore = iterator.next();
+											String displayName = leaderboardScore.getScoreHolderDisplayName();
+
+											leaderboard_result.put(String.valueOf(leaderboardScore.getRank()) + ":score", leaderboardScore.getRawScore());
+											leaderboard_result.put(String.valueOf(leaderboardScore.getRank()) + ":name", displayName);
+											leaderboard_result.put(String.valueOf(leaderboardScore.getRank()) + ":photo_path", "user://" + displayName);
+
+											googlePlayer.copy_user_picture(leaderboardScore.getScoreHolderIconImageUri(), displayName);
+										}
+									} catch (JSONException e) {
+										Log.w(TAG, "Failed to load player's game informations: " + e);
+									}
+
+									GodotLib.calldeferred(instance_id, "google_leaderboard_loaded_top_score", new Object[] { leaderboard_result });
+								} else {
+									Log.e(TAG, "Error while loading top scores: " + task.getException());
+
+									GodotLib.calldeferred(instance_id, "google_leaderboard_load_top_scores_failed", new Object[]{ task.getException().getMessage() });
+								}
+							}
+					});
+
+					return null;
+				}
+			};
+
+			task.execute();
+			Log.i(TAG, "Loading top scores");
+		} else {
+			String message = "PlayGameServices: Google not connected";
+
+			GodotLib.calldeferred(instance_id, "google_leaderboard_load_top_scores_failed", new Object[] { message });
 		}
 	}
 }

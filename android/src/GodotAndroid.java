@@ -17,6 +17,7 @@ import android.os.Bundle;
 
 import com.godot.game.BuildConfig;
 import com.google.android.gms.games.SnapshotsClient;
+import com.google.android.gms.games.leaderboard.LeaderboardVariant;
 
 import org.godotengine.godot.GodotLib;
 import org.godotengine.godot.GodotAndroidRequest;
@@ -76,6 +77,16 @@ public class GodotAndroid extends Godot.SingletonBase {
 	private FirebaseCurrentInvite firebaseCurrentInvite;
 	private FirebaseCurrentAuthentication firebaseCurrentAuthentication;
 
+	public static final Dictionary GOOGLE_LEADERBOARD_TIMESPAN;
+
+	static {
+		GOOGLE_LEADERBOARD_TIMESPAN = new Dictionary();
+
+		GOOGLE_LEADERBOARD_TIMESPAN.put("TIME_SPAN_WEEKLY", Integer.valueOf(LeaderboardVariant.TIME_SPAN_WEEKLY));
+		GOOGLE_LEADERBOARD_TIMESPAN.put("TIME_SPAN_ALL_TIME", Integer.valueOf(LeaderboardVariant.TIME_SPAN_ALL_TIME));
+		GOOGLE_LEADERBOARD_TIMESPAN.put("TIME_SPAN_DAILY", Integer.valueOf(LeaderboardVariant.TIME_SPAN_DAILY));
+	};
+
 	public static final Dictionary GOOGLE_SNAPSHOT_RESOLUTION_POLICIES;
 
 	static {
@@ -101,7 +112,8 @@ public class GodotAndroid extends Godot.SingletonBase {
 			"google_connect", "google_disconnect", "google_is_connected",
 
 			// GoogleLeaderboard
-			"google_leaderboard_submit", "google_leaderboard_show", "google_leaderboard_showlist",
+			"google_leaderboard_submit", "google_leaderboard_show", "google_leaderboard_showlist", "get_google_leaderboard_timespan",
+			"google_leaderboard_load_top_scores", "google_leaderboard_load_player_centered_scores", "google_leaderboard_load_player_score", 
 
 			// GoogleSnapshot
 			"google_snapshot_load", "google_snapshot_save", "get_google_resolution_policies",
@@ -169,6 +181,10 @@ public class GodotAndroid extends Godot.SingletonBase {
 
 	public Dictionary get_google_resolution_policies() {
 		return GOOGLE_SNAPSHOT_RESOLUTION_POLICIES;
+	}
+
+	public Dictionary get_google_leaderboard_timespan() {
+		return GOOGLE_LEADERBOARD_TIMESPAN;
 	}
 
 	public void godot_initialize(final int instance_id) {
@@ -349,6 +365,18 @@ public class GodotAndroid extends Godot.SingletonBase {
 	}
 
 	// Google Leaderboards
+	public void google_leaderboard_load_player_score(final String leaderboard_id, final int time_span) {
+		googleLeaderboard.leaderboard_load_player_score(leaderboard_id, time_span);
+	}
+
+	public void google_leaderboard_load_top_scores(final String leaderboard_id, final int time_span, final int max_results, final boolean force_reload) {
+		googleLeaderboard.leaderboard_load_top_scores(leaderboard_id, time_span, max_results, force_reload);
+	}
+
+	public void google_leaderboard_load_player_centered_scores(final String leaderboard_id, final int time_span, final int max_results, final boolean force_reload) {
+		googleLeaderboard.leaderboard_load_player_centered_scores(leaderboard_id, time_span, max_results, force_reload);
+	}
+
 	public void google_leaderboard_submit(final String id, final int score) {
 		activity.runOnUiThread(new Runnable() {
 			public void run() {

@@ -55,7 +55,7 @@ public class GooglePlayer {
 	private static Context context = null;
 	private static GooglePlayer mInstance = null;
 	private Player currentPlayer = null;
-	private static String pictures_local_name = "playgame_photo.png";
+	private static final String pictures_local_name = "playgame_photo.png";
 
 	private static int script_id;
 	private static final String TAG = "GooglePlayer";
@@ -142,6 +142,10 @@ public class GooglePlayer {
 	}
 
 	private void copy_user_picture(Uri sourceUri) {
+		copy_user_picture(sourceUri, pictures_local_name);
+	}
+
+	public void copy_user_picture(Uri sourceUri, final String local_path) {
 		ImageManager imageManager = ImageManager.create(context);
 
 		imageManager.loadImage(new ImageManager.OnImageLoadedListener() {
@@ -151,7 +155,7 @@ public class GooglePlayer {
 					Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
 
 					try {
-						FileOutputStream out = context.openFileOutput(pictures_local_name, Context.MODE_PRIVATE);
+						FileOutputStream out = context.openFileOutput(local_path, Context.MODE_PRIVATE);
 
 						bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
 						out.flush();
