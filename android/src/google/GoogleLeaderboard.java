@@ -212,8 +212,15 @@ public class GoogleLeaderboard {
 								if (task.isSuccessful()) {
 									AnnotatedData<LeaderboardScore> result = task.getResult();
 									LeaderboardScore leaderboardScore = result.get();
+									long score = -1;
+									long rank = -1;
 
-									GodotLib.calldeferred(instance_id, "google_leaderboard_loaded_score", new Object[] { String.valueOf(leaderboardScore.getRawScore()), String.valueOf(leaderboardScore.getRank()) });
+									if (leaderboardScore != null) {
+										score = leaderboardScore.getRawScore();
+										rank = leaderboardScore.getRank();
+									}
+
+									GodotLib.calldeferred(instance_id, "google_leaderboard_loaded_score", new Object[] { String.valueOf(score), String.valueOf(rank) });
 								} else {
 									Log.e(TAG, "Error while loading score: " + task.getException());
 
