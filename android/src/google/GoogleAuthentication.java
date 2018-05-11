@@ -100,7 +100,7 @@ public class GoogleAuthentication extends GodotAndroidCommon {
 		mAuth = FirebaseAuth.getInstance();
 	}
 
-	public void onConnected() {
+	public synchronized void onConnected() {
 		// Ensure we are not calling it twice in a row
 		if (updateConnectionStatus(GodotConnectStatus.CONNECTED)) {
 			FirebaseUser firebaseUser = mAuth.getCurrentUser();
@@ -126,7 +126,7 @@ public class GoogleAuthentication extends GodotAndroidCommon {
 		}
 	}
 
-	public void onDisconnected() {
+	public synchronized void onDisconnected() {
 		if (updateConnectionStatus(GodotConnectStatus.DISCONNECTED)) {
 			Log.i(TAG, "Google signed out.");
 
