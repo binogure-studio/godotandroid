@@ -265,6 +265,11 @@ public class GoogleAuthentication extends GodotAndroidCommon {
 			GoogleSignInAccount account = result.getSignInAccount();
 
 			firebaseAuthWithGoogle(account);
+		} else if (result.getStatus().getStatusCode() == GoogleSignInStatusCodes. SIGN_IN_CURRENTLY_IN_PROGRESS) {
+			Log.i(TAG, "Already trying to sign in");
+
+			// We should stop the propagation of the event now
+			onDisconnected();
 		} else if (result.getStatus().getStatusCode() == GoogleSignInStatusCodes.SIGN_IN_CANCELLED) {
 			Log.i(TAG, "Failed to connect, user cancelled: " + result.getStatus());
 

@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.View;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.godot.game.BuildConfig;
@@ -188,17 +189,25 @@ public class GodotAndroid extends Godot.SingletonBase {
 	}
 
 	public void godot_initialize(final int instance_id) {
-		activity.runOnUiThread(new Runnable() {
-			public void run() {
+		AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+			@Override
+			protected Void doInBackground(Void... params) {
 				godotAndroidShare.init(instance_id);
 				godotAndroidNetwork.init(instance_id);
+
+				GodotLib.calldeferred(instance_id, "godot_android_initialized", new Object[] { });
+
+				return null;
 			}
-		});
+		};
+
+		task.execute();
 	}
 
 	public void firebase_initialize(final int instance_id) {
-		activity.runOnUiThread(new Runnable() {
-			public void run() {
+		AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+			@Override
+			protected Void doInBackground(Void... params) {
 				firebaseCurrentUser.init(instance_id);
 				firebaseCurrentAnalytics.init(instance_id);
 				firebaseCurrentInvite.init(instance_id);
@@ -206,8 +215,14 @@ public class GodotAndroid extends Godot.SingletonBase {
 
 				// Static class
 				FirebaseCurrentNotification.init(instance_id);
+
+				GodotLib.calldeferred(instance_id, "firebase_initialized", new Object[] { });
+
+				return null;
 			}
-		});
+		};
+
+		task.execute();
 	}
 
 	public String firebase_get_fcm() {
@@ -288,24 +303,38 @@ public class GodotAndroid extends Godot.SingletonBase {
 	}
 
 	public void google_initialize(final int instance_id) {
-		activity.runOnUiThread(new Runnable() {
-			public void run() {
+		AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+			@Override
+			protected Void doInBackground(Void... params) {
 				googleAchievements.init(instance_id);
 				googleAuthentication.init(instance_id);
 				googlePlayer.init(instance_id);
 				googleLeaderboard.init(instance_id);
 				googleSnapshot.init(instance_id);
+
+				GodotLib.calldeferred(instance_id, "google_initialized", new Object[] { });
+
+				return null;
 			}
-		});
+		};
+
+		task.execute();
 	}
 
 	public void facebook_initialize(final int instance_id) {
-		activity.runOnUiThread(new Runnable() {
-			public void run() {
+		AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+			@Override
+			protected Void doInBackground(Void... params) {
 				facebookAuthentication.init(instance_id);
 				facebookShare.init(instance_id);
+
+				GodotLib.calldeferred(instance_id, "facebook_initialized", new Object[] { });
+
+				return null;
 			}
-		});
+		};
+
+		task.execute();
 	}
 
 	public void facebook_connect() {
