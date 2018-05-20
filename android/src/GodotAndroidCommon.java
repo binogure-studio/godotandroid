@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.EnumMap;
 import java.io.IOException;
 
-import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 

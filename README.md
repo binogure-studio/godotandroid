@@ -17,9 +17,7 @@ Android services for Godot Engine 2.1, including:
    * Achievements
    * Snapshots
    * Player
-* Facebook
-   * Authentication (linked account)
-   * Share
+* Facebook (Removed due to GDPR)
 * Firebase
    * Authentication (anonymous)
    * User details

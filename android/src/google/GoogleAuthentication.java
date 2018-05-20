@@ -22,6 +22,7 @@ import org.godotengine.godot.GodotLib;
 import org.godotengine.godot.GodotAndroidCommon;
 import org.godotengine.godot.GodotAndroidRequest;
 import org.godotengine.godot.google.GooglePlayer;
+import java.lang.IllegalArgumentException;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes;
@@ -107,8 +108,12 @@ public class GoogleAuthentication extends GodotAndroidCommon {
 
 			GodotLib.calldeferred(instance_id, "google_auth_connected", new Object[]{ firebaseUser.getDisplayName() });
 
-			// Setup the popup for the achivements
-			Games.getGamesClient(activity, mAccount).setViewForPopups(activity.getWindow().getDecorView().findViewById(android.R.id.content));
+			try {
+				// Setup the popup for the achivements
+				Games.getGamesClient(activity, mAccount).setViewForPopups(activity.getWindow().getDecorView().findViewById(android.R.id.content));
+			} catch (IllegalArgumentException ex) {
+				Log.w(TAG, "Google game client is already set: " + ex.getMessage());
+			}
 
 			GooglePlayer googlePlayer = GooglePlayer.getInstance(activity);
 
@@ -159,8 +164,13 @@ public class GoogleAuthentication extends GodotAndroidCommon {
 	}
 
 	public void disconnect() {
-		// try to disconnect only once at a time
+		// Try to disconnect only once at a time
 		if (updateConnectionStatus(GodotConnectStatus.DISCONNECTING)) {
+			if (mAuth == null) {
+				// Already disconnected
+				return disconnect_from_google();
+			}
+
 			FirebaseUser firebaseUser = mAuth.getCurrentUser();
 
 			// We don't want to logout from firebase, we ant to logout from google.
@@ -169,7 +179,7 @@ public class GoogleAuthentication extends GodotAndroidCommon {
 				.addOnCompleteListener(activity, new OnCompleteListener<AuthResult>() {
 					@Override
 					public void onComplete(@NonNull Task<AuthResult> task) {
-						if (task.isSuccessful()) {
+						if (task != null && task.isSuccessful()) {
 							// Auth provider unlinked from account
 							disconnect_from_google();
 						} else {
