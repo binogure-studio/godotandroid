@@ -119,7 +119,7 @@ public class GodotAndroid extends Godot.SingletonBase {
 			"firebase_initialize",
 
 			// Firebase analytics
-			"firebase_analytics_initialize",
+			"firebase_analytics_status",
 
 			// FirebaseCurrentUser
 			"firebase_get_user_details",
@@ -194,6 +194,7 @@ public class GodotAndroid extends Godot.SingletonBase {
 			protected Void doInBackground(Void... params) {
 				firebaseCurrentUser.init(instance_id);
 				firebaseCurrentInvite.init(instance_id);
+				firebaseCurrentAnalytics.init(instance_id);
 				firebaseCurrentAuthentication.init(instance_id);
 
 				// Static class
@@ -208,19 +209,8 @@ public class GodotAndroid extends Godot.SingletonBase {
 		task.execute();
 	}
 
-	public void firebase_analytics_initialize(final int instance_id) {
-		AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
-			@Override
-			protected Void doInBackground(Void... params) {
-				firebaseCurrentAnalytics.init(instance_id);
-
-				GodotLib.calldeferred(instance_id, "firebase_analytics_initialized", new Object[] { });
-
-				return null;
-			}
-		};
-
-		task.execute();
+	public void firebase_analytics_status(final boolean status) {
+		firebaseCurrentAnalytics.set_analytics_status(status);
 	}
 
 	public String firebase_get_fcm() {

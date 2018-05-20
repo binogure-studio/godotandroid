@@ -43,6 +43,10 @@ public class FirebaseCurrentAnalytics {
 		onStart();
 	}
 
+	public void set_analytics_status(final boolean status) {
+		mFirebaseAnalytics.setAnalyticsCollectionEnabled(status);
+	}
+
 	public void log_event(final String eventName, final Dictionary params) {
 		Bundle bundle = new Bundle();
 
