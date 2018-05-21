@@ -56,6 +56,7 @@ public class GooglePlayer {
 	private static GooglePlayer mInstance = null;
 	private Player currentPlayer = null;
 	private static final String pictures_local_name = "playgame_photo.png";
+	private static PlayersClient mPlayersClient = null;
 
 	private static int script_id;
 	private static final String TAG = "GooglePlayer";
@@ -101,14 +102,28 @@ public class GooglePlayer {
 
 	protected boolean is_connected() {
 		GoogleAuthentication googleAuthentication = GoogleAuthentication.getInstance(activity);
+		boolean isConnected = googleAuthentication.isConnected();
 
-		return googleAuthentication.isConnected();
+		if (!isConnected) {
+			// Reset the client
+			mPlayersClient = null;
+		}
+
+		return isConnected;
+	}
+
+	public void disconnected() {
+		mPlayersClient = null;
 	}
 
 	protected PlayersClient get_player_client() {
-		GoogleAuthentication googleAuthentication = GoogleAuthentication.getInstance(activity);
+		if (mPlayersClient == null) {
+			GoogleAuthentication googleAuthentication = GoogleAuthentication.getInstance(activity);
 
-		return Games.getPlayersClient(activity, googleAuthentication.get_account());
+			mPlayersClient = Games.getPlayersClient(activity, googleAuthentication.get_account());
+		}
+
+		return mPlayersClient;
 	}
 
 	public void load_current_player() {

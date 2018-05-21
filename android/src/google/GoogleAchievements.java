@@ -45,6 +45,7 @@ public class GoogleAchievements {
 	private static Context context = null;
 	private static GoogleAchievements mInstance = null;
 	private static int script_id;
+	private static AchievementsClient mAchievementsClient = null;
 
 	private static final String TAG = "GoogleAchievements";
 
@@ -88,14 +89,28 @@ public class GoogleAchievements {
 
 	protected boolean is_connected() {
 		GoogleAuthentication googleAuthentication = GoogleAuthentication.getInstance(activity);
+		boolean isConnected = googleAuthentication.isConnected();
 
-		return googleAuthentication.isConnected();
+		if (!isConnected) {
+			// Reset the client
+			mAchievementsClient = null;
+		}
+
+		return isConnected;
 	}
 
 	protected AchievementsClient get_achievement_client() {
-		GoogleAuthentication googleAuthentication = GoogleAuthentication.getInstance(activity);
+		if (mAchievementsClient == null) {
+			GoogleAuthentication googleAuthentication = GoogleAuthentication.getInstance(activity);
 
-		return Games.getAchievementsClient(activity, googleAuthentication.get_account());
+			mAchievementsClient = Games.getAchievementsClient(activity, googleAuthentication.get_account());
+		}
+
+		return mAchievementsClient;
+	}
+
+	public void disconnected() {
+		mAchievementsClient = null;
 	}
 
 	public void achievement_unlock(final String achievement_id) {

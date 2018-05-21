@@ -21,8 +21,6 @@ import org.godotengine.godot.Godot;
 import org.godotengine.godot.GodotLib;
 import org.godotengine.godot.GodotAndroidCommon;
 import org.godotengine.godot.GodotAndroidRequest;
-import org.godotengine.godot.google.GooglePlayer;
-import java.lang.IllegalArgumentException;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes;
@@ -135,6 +133,12 @@ public class GoogleAuthentication extends GodotAndroidCommon {
 		if (updateConnectionStatus(GodotConnectStatus.DISCONNECTED)) {
 			Log.i(TAG, "Google signed out.");
 
+			// Reset the clients
+			GoogleAchievements.getInstance(activity).disconnected();
+			GoogleLeaderboard.getInstance(activity).disconnected();
+			GooglePlayer.getInstance(activity).disconnected();
+			GoogleSnapshot.getInstance(activity).disconnected();
+
 			GodotLib.calldeferred(instance_id, "google_auth_disconnected", new Object[] {});
 		}
 	}
@@ -168,7 +172,9 @@ public class GoogleAuthentication extends GodotAndroidCommon {
 		if (updateConnectionStatus(GodotConnectStatus.DISCONNECTING)) {
 			if (mAuth == null) {
 				// Already disconnected
-				return disconnect_from_google();
+				disconnect_from_google();
+
+				return;
 			}
 
 			FirebaseUser firebaseUser = mAuth.getCurrentUser();

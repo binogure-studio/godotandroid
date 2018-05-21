@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.EnumMap;
 import java.io.IOException;
+import java.lang.IllegalArgumentException;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

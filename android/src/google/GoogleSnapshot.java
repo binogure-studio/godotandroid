@@ -44,6 +44,7 @@ public class GoogleSnapshot {
 	private static Context context = null;
 	private static GoogleSnapshot mInstance = null;
 	private static int script_id;
+	private static SnapshotsClient mSnapshotsClient = null;
 
 	private static final int MAX_SNAPSHOT_RESOLVE_RETRIES = 10;
 	private static final String TAG = "GoogleSnapshot";
@@ -88,14 +89,28 @@ public class GoogleSnapshot {
 
 	protected boolean is_connected() {
 		GoogleAuthentication googleAuthentication = GoogleAuthentication.getInstance(activity);
+		boolean isConnected = googleAuthentication.isConnected();
 
-		return googleAuthentication.isConnected();
+		if (!isConnected) {
+			// Reset the client
+			mSnapshotsClient = null;
+		}
+
+		return isConnected;
 	}
 
 	protected SnapshotsClient get_snapshot_client() {
-		GoogleAuthentication googleAuthentication = GoogleAuthentication.getInstance(activity);
+		if (mSnapshotsClient == null) {
+			GoogleAuthentication googleAuthentication = GoogleAuthentication.getInstance(activity);
 
-		return Games.getSnapshotsClient(activity, googleAuthentication.get_account());
+			mSnapshotsClient = Games.getSnapshotsClient(activity, googleAuthentication.get_account());
+		}
+
+		return mSnapshotsClient;
+	}
+
+	public void disconnected() {
+		mSnapshotsClient = null;
 	}
 
 	public void snapshot_load(final String snapshotName, final int conflictResolutionPolicy) {

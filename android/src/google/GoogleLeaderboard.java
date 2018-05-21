@@ -51,6 +51,7 @@ public class GoogleLeaderboard {
 	private static Activity activity = null;
 	private static Context context = null;
 	private static GoogleLeaderboard mInstance = null;
+	private static LeaderboardsClient mLeaderboardsClient = null;
 
 	private static int script_id;
 	private static final String TAG = "GoogleLeaderboard";
@@ -95,14 +96,28 @@ public class GoogleLeaderboard {
 
 	protected boolean is_connected() {
 		GoogleAuthentication googleAuthentication = GoogleAuthentication.getInstance(activity);
+		boolean isConnected = googleAuthentication.isConnected();
 
-		return googleAuthentication.isConnected();
+		if (!isConnected) {
+			// Reset the client
+			mLeaderboardsClient = null;
+		}
+
+		return isConnected;
 	}
 
 	protected LeaderboardsClient get_leaderboard_client() {
-		GoogleAuthentication googleAuthentication = GoogleAuthentication.getInstance(activity);
+		if (mLeaderboardsClient == null) {
+			GoogleAuthentication googleAuthentication = GoogleAuthentication.getInstance(activity);
 
-		return Games.getLeaderboardsClient(activity, googleAuthentication.get_account());
+			mLeaderboardsClient = Games.getLeaderboardsClient(activity, googleAuthentication.get_account());
+		}
+
+		return mLeaderboardsClient;
+	}
+
+	public void disconnected() {
+		mLeaderboardsClient = null;
 	}
 
 	public void leaderboard_submit(String id, int score) {
@@ -114,7 +129,6 @@ public class GoogleLeaderboard {
 			GodotLib.calldeferred(instance_id, "google_leaderboard_submitted", new Object[] { id, score });
 		} else {
 			String message = "PlayGameServices: Google not connected";
-
 			GodotLib.calldeferred(instance_id, "google_leaderboard_submit_failed", new Object[] { message });
 		}
 	}

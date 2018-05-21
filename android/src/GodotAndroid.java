@@ -73,6 +73,10 @@ public class GodotAndroid extends Godot.SingletonBase {
 
 	public static final Dictionary GOOGLE_LEADERBOARD_TIMESPAN;
 
+	private boolean google_initialized = false;
+	private boolean firebase_initialized = false;
+	private boolean godot_generic_initialized = false;
+
 	static {
 		GOOGLE_LEADERBOARD_TIMESPAN = new Dictionary();
 
@@ -179,8 +183,9 @@ public class GodotAndroid extends Godot.SingletonBase {
 				godotAndroidShare.init(instance_id);
 				godotAndroidNetwork.init(instance_id);
 
-				GodotLib.calldeferred(instance_id, "godot_android_initialized", new Object[] { });
+				godot_generic_initialized = true;
 
+				GodotLib.calldeferred(instance_id, "godot_android_initialized", new Object[] { });
 				return null;
 			}
 		};
@@ -199,6 +204,8 @@ public class GodotAndroid extends Godot.SingletonBase {
 
 				// Static class
 				FirebaseCurrentNotification.init(instance_id);
+
+				firebase_initialized = true;
 
 				GodotLib.calldeferred(instance_id, "firebase_initialized", new Object[] { });
 
@@ -299,6 +306,8 @@ public class GodotAndroid extends Godot.SingletonBase {
 				googlePlayer.init(instance_id);
 				googleLeaderboard.init(instance_id);
 				googleSnapshot.init(instance_id);
+
+				google_initialized = true;
 
 				GodotLib.calldeferred(instance_id, "google_initialized", new Object[] { });
 
@@ -425,82 +434,102 @@ public class GodotAndroid extends Godot.SingletonBase {
 	}
 
 	protected void onMainActivityResult (int requestCode, int resultCode, Intent data) {
-		// Trigger google's services
-		googleAchievements.onActivityResult(requestCode, resultCode, data);
-		googlePlayer.onActivityResult(requestCode, resultCode, data);
-		googleAuthentication.onActivityResult(requestCode, resultCode, data);
-		googleLeaderboard.onActivityResult(requestCode, resultCode, data);
-		googleSnapshot.onActivityResult(requestCode, resultCode, data);
+		if (google_initialized) {
+			// Trigger google's services
+			googleAchievements.onActivityResult(requestCode, resultCode, data);
+			googlePlayer.onActivityResult(requestCode, resultCode, data);
+			googleAuthentication.onActivityResult(requestCode, resultCode, data);
+			googleLeaderboard.onActivityResult(requestCode, resultCode, data);
+			googleSnapshot.onActivityResult(requestCode, resultCode, data);
+		}
 
-						
-		// Trigger Firebase
-		firebaseCurrentUser.onActivityResult(requestCode, resultCode, data);
-		firebaseCurrentAnalytics.onActivityResult(requestCode, resultCode, data);
-		firebaseCurrentInvite.onActivityResult(requestCode, resultCode, data);
-		firebaseCurrentAuthentication.onActivityResult(requestCode, resultCode, data);
+		if (firebase_initialized) {
+			// Trigger Firebase
+			firebaseCurrentUser.onActivityResult(requestCode, resultCode, data);
+			firebaseCurrentAnalytics.onActivityResult(requestCode, resultCode, data);
+			firebaseCurrentInvite.onActivityResult(requestCode, resultCode, data);
+			firebaseCurrentAuthentication.onActivityResult(requestCode, resultCode, data);
+		}
 
-		// Trigger Godot Utils
-		godotAndroidShare.onActivityResult(requestCode, resultCode, data);
-		godotAndroidNetwork.onActivityResult(requestCode, resultCode, data);
+		if (godot_generic_initialized) {
+			// Trigger Godot Utils
+			godotAndroidShare.onActivityResult(requestCode, resultCode, data);
+			godotAndroidNetwork.onActivityResult(requestCode, resultCode, data);
+		}
 	}
 
 	protected void onMainPause () {
-		// Trigger google's services
-		googleAchievements.onPause();
-		googlePlayer.onPause();
-		googleAuthentication.onPause();
-		googleLeaderboard.onPause();
-		googleSnapshot.onPause();
+		if (google_initialized) {
+			// Trigger google's services
+			googleAchievements.onPause();
+			googlePlayer.onPause();
+			googleAuthentication.onPause();
+			googleLeaderboard.onPause();
+			googleSnapshot.onPause();
+		}
 
-						
-		// Trigger Firebase
-		firebaseCurrentUser.onPause();
-		firebaseCurrentAnalytics.onPause();
-		firebaseCurrentInvite.onPause();
-		firebaseCurrentAuthentication.onPause();
+		if (firebase_initialized) {
+			// Trigger Firebase
+			firebaseCurrentUser.onPause();
+			firebaseCurrentAnalytics.onPause();
+			firebaseCurrentInvite.onPause();
+			firebaseCurrentAuthentication.onPause();
+		}
 
-		// Trigger Godot Utils
-		godotAndroidShare.onPause();
-		godotAndroidNetwork.onPause();
+		if (godot_generic_initialized) {
+			// Trigger Godot Utils
+			godotAndroidShare.onPause();
+			godotAndroidNetwork.onPause();
+		}
 	}
 
 	protected void onMainResume () {
-		// Trigger google's services
-		googleAchievements.onResume();
-		googlePlayer.onResume();
-		googleAuthentication.onResume();
-		googleLeaderboard.onResume();
-		googleSnapshot.onResume();
+		if (google_initialized) {
+			// Trigger google's services
+			googleAchievements.onResume();
+			googlePlayer.onResume();
+			googleAuthentication.onResume();
+			googleLeaderboard.onResume();
+			googleSnapshot.onResume();
+		}
 
-						
-		// Trigger Firebase
-		firebaseCurrentUser.onResume();
-		firebaseCurrentAnalytics.onResume();
-		firebaseCurrentInvite.onResume();
-		firebaseCurrentAuthentication.onResume();
+		if (firebase_initialized) {
+			// Trigger Firebase
+			firebaseCurrentUser.onResume();
+			firebaseCurrentAnalytics.onResume();
+			firebaseCurrentInvite.onResume();
+			firebaseCurrentAuthentication.onResume();
+		}
 
-		// Trigger Godot Utils
-		godotAndroidShare.onResume();
-		godotAndroidNetwork.onResume();
+		if (godot_generic_initialized) {
+			// Trigger Godot Utils
+			godotAndroidShare.onResume();
+			godotAndroidNetwork.onResume();
+		}
 	}
 
 	protected void onMainDestroy () {
-		// Trigger google's services
-		googleAchievements.onStop();
-		googlePlayer.onStop();
-		googleAuthentication.onStop();
-		googleLeaderboard.onStop();
-		googleSnapshot.onStop();
+		if (google_initialized) {
+			// Trigger google's services
+			googleAchievements.onStop();
+			googlePlayer.onStop();
+			googleAuthentication.onStop();
+			googleLeaderboard.onStop();
+			googleSnapshot.onStop();
+		}
 
-						
-		// Trigger Firebase
-		firebaseCurrentUser.onStop();
-		firebaseCurrentAnalytics.onStop();
-		firebaseCurrentInvite.onStop();
-		firebaseCurrentAuthentication.onStop();
+		if (firebase_initialized) {
+			// Trigger Firebase
+			firebaseCurrentUser.onStop();
+			firebaseCurrentAnalytics.onStop();
+			firebaseCurrentInvite.onStop();
+			firebaseCurrentAuthentication.onStop();
+		}
 
-		// Trigger Godot Utils
-		godotAndroidShare.onStop();
-		godotAndroidNetwork.onStop();
+		if (godot_generic_initialized) {
+			// Trigger Godot Utils
+			godotAndroidShare.onStop();
+			godotAndroidNetwork.onStop();
+		}
 	}
 }
