@@ -415,10 +415,16 @@ public class GodotAndroid extends Godot.SingletonBase {
 		return godotAndroidShare.get_shared_directory();
 	}
 
-	public void godot_share(final String title, final String message, final String image_filename) {
+	public void godot_share(final String title, final String message, final String image_filename, final String package_name) {
 		activity.runOnUiThread(new Runnable() {
 			public void run() {
-				godotAndroidShare.share(title, message, image_filename);
+				String package_to_share_with = null;
+
+				if (package_name.length() > 0) {
+					package_to_share_with = package_name;
+				}
+
+				godotAndroidShare.share(title, message, image_filename, package_to_share_with);
 			}
 		});
 	}

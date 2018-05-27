@@ -61,7 +61,7 @@ public class GodotAndroidShare {
 		return "/shared";
 	}
 
-	public void share(final String title, final String message, final String image_filename) {
+	public void share(final String title, final String message, final String image_filename, final String package_name) {
 		Intent shareIntent = new Intent();
 		String type = "text/plain";
 
@@ -81,6 +81,10 @@ public class GodotAndroidShare {
 			} else {
 				Log.w(TAG, "File not found: " + get_shared_directory() + "/" + image_filename);
 			}
+		}
+
+		if (package_name != null) {
+			shareIntent.setPackage(package_name);
 		}
 
 		shareIntent.putExtra(Intent.EXTRA_TEXT, message);
