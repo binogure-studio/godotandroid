@@ -444,12 +444,8 @@ public class GodotAndroid extends Godot.SingletonBase {
 	public String godot_get_country_code_iso() {
 		try {
 			final TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-			final String simCountry = telephonyManager.getSimCountryIso();
 
-			// SIM country code is available
-			if (simCountry != null && simCountry.length() == 2) {
-				return simCountry.toLowerCase(Locale.US);
-			} else if (telephonyManager.getPhoneType() != TelephonyManager.PHONE_TYPE_CDMA) {
+			if (telephonyManager.getPhoneType() != TelephonyManager.PHONE_TYPE_CDMA) {
 				// device is not 3G (would be unreliable)
 				String networkCountry = telephonyManager.getNetworkCountryIso();
 
@@ -457,6 +453,13 @@ public class GodotAndroid extends Godot.SingletonBase {
 				if (networkCountry != null && networkCountry.length() == 2) {
 					return networkCountry.toLowerCase(Locale.US);
 				}
+			}
+
+			final String simCountry = telephonyManager.getSimCountryIso();
+
+			// SIM country code is available
+			if (simCountry != null && simCountry.length() == 2) {
+				return simCountry.toLowerCase(Locale.US);
 			}
 		} catch (Exception ex) {
 			Log.i(TAG, "Cannot determine the country code: " + ex.getMessage());
