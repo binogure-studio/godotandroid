@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 
 import com.godot.game.BuildConfig;
 import com.google.android.gms.games.SnapshotsClient;
@@ -24,6 +25,7 @@ import org.godotengine.godot.GodotLib;
 import org.godotengine.godot.GodotAndroidRequest;
 
 import java.io.File;
+import java.util.Locale;
 import java.util.Arrays;
 import java.util.List;
 import java.util.HashMap;
@@ -146,7 +148,7 @@ public class GodotAndroid extends Godot.SingletonBase {
 			"godot_initialize", "godot_share", "godot_get_shared_directory",
 
 			// Network
-			"godot_is_online", "godot_is_wifi_connected", "godot_is_mobile_connected"
+			"godot_is_online", "godot_is_wifi_connected", "godot_is_mobile_connected", "godot_get_country_code_iso"
 		});
 
 		activity = p_activity;
@@ -431,6 +433,30 @@ public class GodotAndroid extends Godot.SingletonBase {
 
 	public boolean godot_is_mobile_connected() {
 		return godotAndroidNetwork.isMobileConnected();
+	}
+
+	public String godot_get_country_code_iso() {
+		try {
+			final TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+			final String simCountry = telephonyManager.getSimCountryIso();
+
+			// SIM country code is available
+			if (simCountry != null && simCountry.length() == 2) {
+				return simCountry.toLowerCase(Locale.US);
+			} else if (telephonyManager.getPhoneType() != TelephonyManager.PHONE_TYPE_CDMA) {
+				// device is not 3G (would be unreliable)
+				String networkCountry = telephonyManager.getNetworkCountryIso();
+
+				// network country code is available
+				if (networkCountry != null && networkCountry.length() == 2) {
+					return networkCountry.toLowerCase(Locale.US);
+				}
+			}
+		} catch (Exception ex) {
+			Log.i(TAG, "Cannot determine the country code: " + ex.getMessage());
+		}
+
+		return "NO_COUNTRY_CODE";
 	}
 
 	protected void onMainActivityResult (int requestCode, int resultCode, Intent data) {
