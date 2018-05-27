@@ -6,7 +6,7 @@ def configure(env):
     if env["platform"] == "android":
         env.android_add_maven_repository("url 'https://maven.google.com'")
 
-        gms_version = "11.8.0"
+        gms_version = "12.0.1"
 
         # Firebase dependencies
         env.android_add_dependency("compile 'com.google.firebase:firebase-core:" + gms_version + "'")

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.godotengine.godot.Dictionary;
 
@@ -22,6 +23,7 @@ public class FirebaseCurrentAnalytics {
 	private static FirebaseCurrentAnalytics mInstance = null;
 
 	private FirebaseAnalytics mFirebaseAnalytics;
+	private FirebaseMessaging mFirebaseMessaging;
 
 	public static synchronized FirebaseCurrentAnalytics getInstance (Activity p_activity) {
 		if (mInstance == null) {
@@ -35,6 +37,7 @@ public class FirebaseCurrentAnalytics {
 		activity = p_activity;
 
 		mFirebaseAnalytics = FirebaseAnalytics.getInstance(activity);
+		mFirebaseMessaging = FirebaseMessaging.getInstance();
 	}
 
 	public void init(final int p_instance_id) {
@@ -45,6 +48,7 @@ public class FirebaseCurrentAnalytics {
 
 	public void set_analytics_status(final boolean status) {
 		mFirebaseAnalytics.setAnalyticsCollectionEnabled(status);
+		mFirebaseMessaging.setAutoInitEnabled(status);
 	}
 
 	public void log_event(final String eventName, final Dictionary params) {
