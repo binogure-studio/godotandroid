@@ -29,10 +29,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.drive.Drive;
+import com.google.android.gms.common.api.Scope;
+import com.google.api.services.drive.DriveScopes;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.GamesClient;
 import com.google.android.gms.games.Player;
@@ -85,7 +85,8 @@ public class GoogleAuthentication extends GodotAndroidCommon {
 		GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
 		.requestIdToken(webclientId)
 		// Since we are using SavedGames, we need to add the SCOPE_APPFOLDER to access Google Drive.
-		.requestScopes(Drive.SCOPE_APPFOLDER)
+		.requestScopes(new Scope(DriveScopes.DRIVE_FILE))
+		.requestScopes(new Scope(DriveScopes.DRIVE_APPDATA))
 		.build();
 
 		mGoogleApiClient = new GoogleApiClient.Builder(activity)
@@ -290,6 +291,11 @@ public class GoogleAuthentication extends GodotAndroidCommon {
 			Log.i(TAG, "Failed to connect, user cancelled: " + result.getStatus());
 
 			onDisconnected();
+		} else if (result.getStatus().getStatusCode() == GoogleSignInStatusCodes.SIGN_IN_REQUIRED) {
+			Log.i(TAG, "User marked as connected, but google flag it has disconnected: " + result.getStatus());
+
+			updateConnectionStatus(GodotConnectStatus.DISCONNECTED);
+			disconnect();
 		} else {
 			updateConnectionStatus(GodotConnectStatus.DISCONNECTED);
 
