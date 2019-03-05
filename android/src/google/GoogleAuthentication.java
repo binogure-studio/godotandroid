@@ -44,11 +44,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Tasks;
 
-import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 
 import com.godot.game.R;
 
@@ -63,7 +59,7 @@ public class GoogleAuthentication extends GodotAndroidCommon {
 	
 	private static GoogleAuthentication mInstance = null;
 	private Boolean initialized = false;
-	private GoogleApiClient mGoogleApiClient;
+	private GoogleSignInClient mGoogleSignInClient;
 	private GoogleSignInAccount mAccount;
 	private GamesClient gamesClient;
 	private Bundle mBundle;
@@ -89,14 +85,7 @@ public class GoogleAuthentication extends GodotAndroidCommon {
 		.requestScopes(new Scope(DriveScopes.DRIVE_APPDATA))
 		.build();
 
-		mGoogleApiClient = new GoogleApiClient.Builder(activity)
-		.addApi(Games.API)
-		.addScope(Games.SCOPE_GAMES)
-		.addApi(Auth.GOOGLE_SIGN_IN_API, options)
-		.setGravityForPopups(Gravity.TOP | Gravity.CENTER_HORIZONTAL)
-		.setViewForPopups(activity.getWindow().getDecorView().findViewById(android.R.id.content))
-		.build();
-
+ 		mGoogleSignInClient = GoogleSignIn.getClient(activity, options);
 		mAuth = FirebaseAuth.getInstance();
 	}
 
@@ -108,7 +97,9 @@ public class GoogleAuthentication extends GodotAndroidCommon {
 			GodotLib.calldeferred(instance_id, "google_auth_connected", new Object[]{ firebaseUser.getDisplayName() });
 
 			try {
-				// Setup the popup for the achivements
+				// FIXME:
+				// This is the line of code who is crashing
+				// Setup the popup for the achievements
 				Games.getGamesClient(activity, mAccount).setViewForPopups(activity.getWindow().getDecorView().findViewById(android.R.id.content));
 			} catch (IllegalArgumentException ex) {
 				Log.w(TAG, "Google game client is already set: " + ex.getMessage());
@@ -124,9 +115,11 @@ public class GoogleAuthentication extends GodotAndroidCommon {
 	public void connect() {
 		// try to connect only once at a time
 		if (updateConnectionStatus(GodotConnectStatus.CONNECTING)) {
-			Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+			Intent signInIntent = mGoogleSignInClient.getSignInIntent();
 
 			activity.startActivityForResult(signInIntent, GodotAndroidRequest.GOOGLE_AUTHENTICATION_REQUEST);
+		} else {
+			Log.i(TAG, "Cannot update state to CONNECTING");
 		}
 	}
 
@@ -156,16 +149,16 @@ public class GoogleAuthentication extends GodotAndroidCommon {
 
 	private void disconnect_from_google() {
 		// Google sign out
-		if (mGoogleApiClient.isConnected()) {
-			Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(new ResultCallback<Status>() {
-				@Override
-				public void onResult(@NonNull Status status) {
+		mGoogleSignInClient.signOut().addOnCompleteListener(new OnCompleteListener() {
+			@Override
+			public void onComplete(Task task) {
+				if (task != null && task.isSuccessful()) {
 					onDisconnected();
+				} else {
+					Log.w(TAG, "Failed to disconnect from google: " + task.getException());
 				}
-			});
-		} else {
-			onDisconnected();
-		}
+			}
+		});
 	}
 
 	public void disconnect() {
@@ -242,6 +235,8 @@ public class GoogleAuthentication extends GodotAndroidCommon {
 			authResultTask = mAuth.signInWithCredential(credential);
 		}
 
+		Log.i(TAG, "Logging firebase with google.");
+
 		authResultTask.addOnCompleteListener(activity, new OnCompleteListener<AuthResult>() {
 			@Override
 			public void onComplete(@NonNull Task<AuthResult> task) {
@@ -265,42 +260,36 @@ public class GoogleAuthentication extends GodotAndroidCommon {
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == GodotAndroidRequest.GOOGLE_AUTHENTICATION_REQUEST) {
-			GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+			Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
 			
-			silentConnectHandler(result);
+			silentConnectHandler(task);
 		}
 	}
 
-	private void silentConnectHandler(GoogleSignInResult result) {
-		if (result == null)  {
+	private void silentConnectHandler(Task<GoogleSignInAccount> result) {
+		if (result == null) {
 			String message = "Failed to connect: result is null";
 			updateConnectionStatus(GodotConnectStatus.DISCONNECTED);
 
 			Log.w(TAG, message);
 			GodotLib.calldeferred(instance_id, "google_auth_connect_failed", new Object[] { message });
-		} else if (result.isSuccess()) {
-			GoogleSignInAccount account = result.getSignInAccount();
+		} else if (result.isSuccessful()) {
+			try {
+				GoogleSignInAccount account = result.getResult(ApiException.class);
 
-			firebaseAuthWithGoogle(account);
-		} else if (result.getStatus().getStatusCode() == GoogleSignInStatusCodes. SIGN_IN_CURRENTLY_IN_PROGRESS) {
-			Log.i(TAG, "Already trying to sign in");
+				Log.i(TAG, "Google signin succeed, signing in with firebase.");
+				firebaseAuthWithGoogle(account);
+			} catch (ApiException e) {
+				updateConnectionStatus(GodotConnectStatus.DISCONNECTED);
 
-			// We should stop the propagation of the event now
-			onDisconnected();
-		} else if (result.getStatus().getStatusCode() == GoogleSignInStatusCodes.SIGN_IN_CANCELLED) {
-			Log.i(TAG, "Failed to connect, user cancelled: " + result.getStatus());
-
-			onDisconnected();
-		} else if (result.getStatus().getStatusCode() == GoogleSignInStatusCodes.SIGN_IN_REQUIRED) {
-			Log.i(TAG, "User marked as connected, but google flag it has disconnected: " + result.getStatus());
-
-			updateConnectionStatus(GodotConnectStatus.DISCONNECTED);
-			disconnect();
+				Log.w(TAG, "Failed to connect: " + result.getException());
+				GodotLib.calldeferred(instance_id, "google_auth_connect_failed", new Object[] { result.getException().getMessage() });
+			}
 		} else {
 			updateConnectionStatus(GodotConnectStatus.DISCONNECTED);
 
-			Log.w(TAG, "Failed to connect: " + result.getStatus());
-			GodotLib.calldeferred(instance_id, "google_auth_connect_failed", new Object[] { result.getStatus().getStatusMessage() });
+			Log.w(TAG, "Failed to connect: " + result.getException());
+			GodotLib.calldeferred(instance_id, "google_auth_connect_failed", new Object[] { result.getException().getMessage() });
 		}
 	}
 
@@ -313,21 +302,17 @@ public class GoogleAuthentication extends GodotAndroidCommon {
 					Log.d(TAG, "Trying to perform silent connect...");
 
 					// Tries to connect in an async way only if the user is not already connected
-					mGoogleApiClient.connect(GoogleApiClient.SIGN_IN_MODE_OPTIONAL);
-				
-					// If the user's cached credentials are valid, the OptionalPendingResult will be "done"
-					// and the GoogleSignInResult will be available instantly.
-					OptionalPendingResult<GoogleSignInResult> pendingResult = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
+					Task<GoogleSignInAccount> task = mGoogleSignInClient.silentSignIn();
 
-					if (pendingResult.isDone()) {
-						silentConnectHandler(pendingResult.get());
+					if (task.isSuccessful()) {
+						silentConnectHandler(task);
 					} else {
 						// There's no immediate result ready, waits for the async callback.
-						pendingResult.setResultCallback(new ResultCallback<GoogleSignInResult>() {
-							@Override
-							public void onResult(@NonNull GoogleSignInResult result) {
-								silentConnectHandler(result);
-							}
+						task.addOnCompleteListener(new OnCompleteListener() {
+						 	@Override
+						 	public void onComplete(Task task) {
+							 	silentConnectHandler(task);
+						 	}
 						});
 					}
 
